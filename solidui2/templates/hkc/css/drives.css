@@ -1,0 +1,120 @@
+#drives {
+    margin-top: 6%;
+    margin-left: 12%;
+    width: 60%;
+    height: 75%;
+}
+
+#drives .popDlg {
+    top: 30%;
+    left: 25%;
+}
+
+#drives .drives_info {
+    width: 100%;
+    height: 100%;    
+    border-radius: 10px;
+	box-shadow: 0px 0px 10px 2px white;
+	-webkit-transition-duration: 0.5s;
+}
+
+#drives .drives_info .headline_text {
+	padding-top: 2%;
+    padding-left: 3%;
+    width: 100%;
+    height: 10%;
+    background: -webkit-linear-gradient(#333333, black);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 2px solid black;
+    font-size: 24px;
+}
+
+#drives .drives_info .content {
+    width: 100%;
+    height: 90%;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background: -webkit-linear-gradient(#333333, grey)
+}
+
+#drives .drives_info .content .stick_info {
+    padding-top: 6%;
+    padding-left: 10%;
+    width: 90%;
+    height: 20%;
+}
+
+#drives .select_view.active  {
+    opacity: 1.0;
+}
+
+#drives .select_view .panel {
+    font-size: 20px;
+}
+
+#drives .select_view.active .panel {
+    border: 2px solid #0b8bca;
+}
+
+#drives .select_view .items {
+    width: 50%;
+    text-align: center;
+}
+
+#drives .select_view.active .arrow.left {
+	background: url( '../images/menu_arrow_selected_back.png' ) no-repeat center center;
+	-webkit-transition-duration: 0.5s;
+}
+#drives .select_view.active .arrow.right {
+	background: url( '../images/menu_arrow_selected.png' ) no-repeat center center;
+	-webkit-transition-duration: 0.5s;
+}
+
+#drives .select_view.active .name {
+    color: white;
+/*	-webkit-transition-duration: 0.5s;*/
+}
+
+#drives .column_left {
+    float: left;
+    height: 80%;
+    padding-top: 8%;
+    padding-left: 15%;
+    font-size: 18px;
+}
+
+#drives .column_right {
+    height: 80%;
+    padding-top: 8%;
+    padding-right: 15%;
+}
+
+#drives .clear {
+	clear: both;
+}
+
+#drives .usb_icon {
+	width: 119px;
+	height: 160px;
+	background: url('../images/usb_icon.png') no-repeat center center;
+}
+
+#drives .name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#drives .icon, #drives .text {
+	float: left;
+	clear: none;
+}
+
+#drives .icon {
+	width: 20px;
+	height: 15px;
+}
+
+#drives .text {
+	padding-left: 10px;
+}

@@ -1,0 +1,77 @@
+#pincode{
+	padding-top:5%;
+	padding-left:5%;
+	padding-right:5%;
+}
+
+#pincode .panel{
+    margin-top:1%;
+    font-size:20px;
+}
+
+#pincode  .message{
+	width:100%;
+	height:45px;
+	text-align:center;
+	padding-top:11px;
+	font-size:20px;	
+	color:red;
+	
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	}
+#pincode  .messagelable{
+	position:relative;
+	width:100%;
+	height:45px;
+	}	
+		
+ .column_left .panel,.column_right .panel {
+	margin-top:10px;
+	margin-bottom:5px;
+	text-align:center;
+	height:35px;
+	margin-left:120px;
+	font-size:16px;
+	width:40%;
+	padding-top:6px;
+	
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	//opacity: 0.5;
+	-webkit-transition-duration: 1.5s;
+	}	
+		
+ .column_left .panel{
+		margin-left:120px;
+		}
+		
+ .column_right .panel{
+		margin-left:60px;
+		}
+
+#pincode .remindlable{
+	position:absolute;
+	left:15%;
+	top:10%;
+	width:100%;
+	height:40px;
+	}
+
+#pincode .remindlable .redwarning{
+	display:inline-block;
+	margin-left:60%;
+	margin-top:30%;
+	width:5%;
+	height:18px;
+	background-color:red;
+}
+
+#pincode .remindlable .redwarningtext{
+	display:inline-block;
+	text-align:left;
+	padding-left:2%;
+	width:30%;
+	}	

@@ -1,0 +1,13 @@
+.fingerPrinter{
+	text-align:center; 
+	position:absolute;
+	left:40%;
+	top:40%;
+	background:black;
+	font-size:40px;
+	z-index: 500;
+}
+	
+.fingerPrinter .message{
+	color:white;
+}

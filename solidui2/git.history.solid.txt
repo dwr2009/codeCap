@@ -1,0 +1,1891 @@
+commit b81da8c1b7d98d769ec95ed9e16708ab9a30e9bb
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jul 20 12:02:22 2015 +0200
+
+    m4054 Info Bar
+    Corrected the currentbox of the Progressbar after changes in EPG
+
+commit d37a7eb4901a4c889f9d48519074a5275b6367a7
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jul 20 11:52:16 2015 +0200
+
+    m4053 Progressbar Widget
+    The currenttime box is now more dynamic
+    Every single time has an individual length, so the box changes his size automatically
+
+commit 787c2b6bee6d91574e480927e8ee381a076979fb
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jul 20 09:34:29 2015 +0200
+
+    m4093 correcting the design of EPG
+    changed the buttons. Text can now be added and translated.
+    tested DCD7005fsi and webserver
+
+commit c451bbbcad3852b127bbe2a421629ccc8cb6d244
+Merge: dc6360e eb3c92b
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Mon Jul 20 09:24:37 2015 +0200
+
+    Merge branch 'master' of ssh://192.168.210.104:52424/ip4tv/solid
+
+commit dc6360e25d0d162d839b490fb5272495441db9f1
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Mon Jul 20 09:22:15 2015 +0200
+
+    m4054: [solid2.0 UI] Info Bar
+    
+    add autoupdate for current next infos
+
+commit eb3c92b88eb3d3d6abdfd7c3ea59f5796b550f00
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jul 20 07:24:50 2015 +0200
+
+    m3974 switching menupoints delays some color pixels
+    bugfixed
+    the transition-effect has been deleted. Has to be added later, if it is working anytime.
+
+commit 2595e67f6a9917f8c78e7c73f635fe13961a70e5
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Mon Jul 20 06:50:54 2015 +0200
+
+    m3786: [solid2.0 UI] Progress Bar Widget
+    
+    progressbar need to start with 3% to avoid that the progress point is out of bar.
+
+commit 627ac8e1b5d77cfe791c0f50b4584ae1554ee490
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Fri Jul 17 14:38:51 2015 +0200
+
+    m3786: [solid2.0 UI] Progress Bar Widget
+    
+    add autoupdate for epg and infobar
+
+commit 2a01824764845c0ebde08109e6fc266151cfac16
+Author: Kostas Siourounis <kotsos@kostas-debian>
+Date:   Fri Jul 17 14:25:14 2015 +0300
+
+    M4015, M3719: Media Engine Timeshift player API
+    
+    TODO:
+      fix all the calls to APVR...
+      add the player to the media_engine_playback
+    
+    not tested.
+
+commit 21107686c766875a07ba5b876dd73b6e8c0b5421
+Author: Yongkang Zhong <yongkang.zhong@ip4.tv>
+Date:   Fri Jul 17 11:26:26 2015 +0200
+
+    M3762: Media Engine API: C++ EPG support
+    
+      - media engine EPG c++ API definition and comments.
+      - implementation stubs in different platform which don't contain actual functionalities.
+    
+      TODO:
+        implmentation of media_engine_epg.cpp
+
+commit a30c1195bcc079b8da04578f9cea4f995e89a354
+Merge: 7bea0dd 05c5b84
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Fri Jul 17 11:52:29 2015 +0300
+
+    Merge for Solid 2 and Media Engine
+
+commit 7bea0dd3d6503d326097a4abdb879ff4e9f2cbda
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Fri Jul 17 11:49:19 2015 +0300
+
+    Media Engine Drives and Media Browser API
+
+commit 05c5b84c0428547cdeed7f755d5da912fbc62da9
+Author: Kostas Siourounis <kotsos@kostas-debian>
+Date:   Thu Jul 16 19:47:59 2015 +0300
+
+    M3719, M4015: Media Engine Timeshift
+    Initial commit of media engine timeshift containing the API defined and
+    comments, no efective calls to DTVKIT or PIPER. Only for imeshift
+    recording.
+    
+    TODO:
+    Add the timeshift playback as
+    media_engine_timeshift_player implementing the
+    media_engine_player abstract class to handle all playback of timeshift.
+
+commit 1fc29a1f9558e0b1205073aff8f4158d06c7f3f4
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 14 14:31:24 2015 +0200
+
+    bugfixed the IPPV screen
+    wrong path in CSS was given
+
+commit 3974b43d3e20175a0b91a6982fbcf26d4509b45d
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 14 10:54:13 2015 +0200
+
+    m4112 Some lists are too high
+    bugfixed a problem that the panels does not work after the last change
+
+commit ffbcd1b14bcfcc0c3e26fe929ce9388f65b33bca
+Merge: 3c3dc4c 75934db
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Tue Jul 14 08:52:48 2015 +0200
+
+    Merge branch 'master' of ssh://192.168.210.104:52424/ip4tv/solid
+
+commit 3c3dc4cfb9ded5a35f8821fd5173613b55978902
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Tue Jul 14 08:47:01 2015 +0200
+
+    m3977 Channels -> Grid EPG
+    
+    Some Changes for date and time formating. Now it is possible to change the layout of date and time in the template (init.js) dependend of language.
+    
+    todo:
+    - change all formatdatetime calls
+    - docu for this function
+    - define some formatstrings in general settings
+
+commit 75934db5d54720fdd4b258499c8419c528f1f677
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 14 08:46:40 2015 +0200
+
+    m4112 some lists are too high, m3976 The Interface is not customizing to the individual screen
+    changed the size of the scene with open menu on the left
+    adjustments of the lists because of the new size of the scene
+    tested DCD7005 fsi and webserver
+
+commit 23dad699b1eb0ebae3f1ecb4a3ca660adfcf5dc2
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 14 06:23:29 2015 +0200
+
+    m4112 Some lists are too high
+    Made the lists of service info and statement scrollable if the screen is smaller
+
+commit aa3c388c29ff9abddb4ba0307f499ccbee8e1695
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 14 06:17:57 2015 +0200
+
+    m4093 Correcting the design of EPG
+    Current timepoint added to the timeline
+    function has to be added
+    tested DCD7005 fsi and webserver
+
+commit 7f13bf349c94fb3c6036511059219fda73ef6969
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jul 13 11:52:15 2015 +0200
+
+    m3976 The size of the Interface is not customizing to the individual screen
+    The content is more dynamic if the screen is smaller
+    tested DCD7005fsi and webserver
+
+commit 0e2a44db39084f8396cdf5cb4ae24dcf66ae8b62
+Merge: ac47fd4 1cd4812
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Thu Jul 9 11:39:14 2015 +0300
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit ac47fd47330d03441f403f7bba7a86cf4598ca93
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Thu Jul 9 11:39:02 2015 +0300
+
+    Fix desktop build. Changed hal include path for desktop
+
+commit 1cd48120f19b5b3bf09f2d47df46a61f6963db63
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Thu Jul 9 10:12:48 2015 +0200
+
+    ignore *~ - files backup files from some editors
+
+commit 0557e3435e8fb2cde074f45bff330335207c5267
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jul 9 11:30:04 2015 +0800
+
+    [M]0004100: put camenu on a hidemenu
+
+commit 0fcd0aef83719090235d95865ca939fb049b026f
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Wed Jul 8 17:10:02 2015 +0300
+
+    Fix Desktop Build
+    
+    Fix Desktop Build
+    
+    Fix Desktop Build
+
+commit 2581d1c0c15b6ba402e1783ce807d19db35e659d
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Tue Jul 7 19:09:00 2015 +0300
+
+    Fix Various errors in build.
+
+commit 15ca8e55ca6d3b3e17177a2588da7e86d2117b44
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 7 14:17:36 2015 +0200
+
+    m4093 Correcting the design of EPG
+    several corrections are done.
+    scrollbar corrected, events and channels changed in other design.
+    tested DCD7005 fsi and webserver
+
+commit 971115f155f2484cbbd46fce5ffa3830adf97b84
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Tue Jul 7 12:56:19 2015 +0200
+
+    m3976 The size of the Interface is not customizing to the individual screen
+    
+    First part to set a margin to the #interface
+    
+    in js/settings/settings.js set the margin of monitor_adjust_* to a pixel value (without "px").
+    this set a margin to all and calculate the wight of interface.
+    
+    ToDo:
+    - General Setting: Integrate a point "monitor adjust" (Popup with up-/down-arrows to all margins) or insert a value by rcu
+    - Get the default Resolution from Platform.Display
+
+commit 6e13874901b8913a28bb2b53029453ccb8a57d1b
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 7 11:31:50 2015 +0200
+
+    m4054 infobar
+    submission picture for the correct design
+    (placeholder)
+
+commit f99f4bbba937613d1e83d5110956cb198ca97e96
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jul 7 11:07:50 2015 +0200
+
+    m4054 Implementing the Infobar and CSS work
+    bugfixed and  developed the correct design
+    
+    m4056 Grid -> EPG
+    several adjustments in the design with CSS work
+    
+    tested DCD 7005 fsi and webserver
+
+commit f4e4f42faca8cb0cdeca6ce1c988ced295c77a23
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Tue Jul 7 09:43:26 2015 +0200
+
+       m4056 [solid2.0 UI] Channels -> Grid EPG
+    
+       Update the EPG for new EPG data structur of fake-data
+
+commit 95f7678653580a9d2145ab361608d82dfcd8f5a9
+Merge: 2f4513d 779ba06
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Mon Jul 6 15:52:34 2015 +0300
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 2f4513ddcaa7b9a22b1e971078b3083905d7b247
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Mon Jul 6 15:52:17 2015 +0300
+
+    Media Engine Channel Management API : Support for custom channel list creation and presistence
+
+commit 779ba06357a763d9a2379168480245227f03480a
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Mon Jul 6 17:36:21 2015 +0800
+
+    [M]0004019: [solid2.0 UI] Settings -> System Info  implement
+
+commit de2511d55f1033dcc3abb3767ddfbaebc16890ca
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Fri Jul 3 19:19:56 2015 +0300
+
+    Stbsettings and hal settings sync
+    some settings are qt for browser others are from hal in the form of
+    files.
+    stbsettings reads hal settings and default name and values from hal
+    make sure to use them.
+    
+    Not tested
+
+commit 5c3226f34f2a6aa2ae773991801b61af1d0b5b90
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Fri Jul 3 15:01:42 2015 +0800
+
+    [M]0003800: [solid2.0 UI] Settings -> General Settings implement
+    optimize css code to be reused effective
+
+commit bac3d79618a3394a213824fbd7b3c7e673b345ba
+Merge: 83904ef a98f6fb
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Thu Jul 2 11:37:06 2015 +0200
+
+    Merge branch 'master' of ssh://192.168.210.104:52424/ip4tv/solid
+
+commit 83904efe83426873e0ed0ef7efa9c7a2b5d238fb
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Thu Jul 2 11:34:42 2015 +0200
+
+    m4056 [solid2.0 UI] Channels -> Grid EPG
+    
+    Update the EPG data structur for fake-data
+
+commit a98f6fb084b490c8fbea0e840edc3739fe28494c
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jul 2 17:29:21 2015 +0800
+
+    Modified the format of time to meet the demand of whether to show second
+
+commit f87f7e0e2e75d611f25996acf34ea656abbd93f2
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jul 2 16:48:53 2015 +0800
+
+    M modified the bug on camenu-->CA information
+
+commit b5e7cceee35a29e91664e8f450639e69c784203a
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jul 2 10:01:55 2015 +0800
+
+    0003961: ca menu Implement
+    Implement ca menu and create some compent such as 'focus_list.js , lable_view.js ,list_input.js ,list_view.js' for multiplexing
+
+commit 7477225cf2f10fd01f92ceb452d9ff7528134512
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Wed Jul 1 14:38:01 2015 +0200
+
+    m4054 infobar
+    updating the translationdatas
+    tested DCD7005 fsi and webserver
+
+commit 7fbefe584cf5bf70904c328ff0602728e6922bff
+Merge: 45b85bd da0bdf4
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Wed Jul 1 14:29:47 2015 +0200
+
+    Merge branch 'master' of ssh://192.168.210.104:52424/ip4tv/solid
+
+commit 45b85bd31d24f1b4836cb4741d439b1c022f6c60
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Wed Jul 1 14:24:51 2015 +0200
+
+    m4054 infobar
+    bugfixed
+    developed and integrated
+    tested DCD7005 fsi and webserver
+    
+    m4053 progressbar
+    bugfixed
+    developed and integrated
+    tested DCD7005 fsi and webserver
+    
+    m4047 scrollbar
+    bugfixed
+    developed and integrated
+    tested DCD7005 fsi and webserver
+    
+    m4056 channels -> Grid EPG
+    bugfixed
+    developed further constructions
+    tested DCD7005 fsi and webserver
+
+commit da0bdf463d4e269375688fd8cca17c3f94b760fc
+Merge: 7d5444a 973a12c
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Tue Jun 30 12:26:13 2015 +0300
+
+    Solid UI2 Merge
+
+commit 7d5444acbe063bb1aea17780f394fe17b1dae8fd
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Tue Jun 30 12:17:11 2015 +0300
+
+    Media Engine API AVOutput
+
+commit 4a4bde26dba44ae26fd1fe383b5cc922b10bde8e
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Tue Jun 30 12:13:03 2015 +0300
+
+    Media Engine AVOutput Updates
+
+commit 973a12c4c5c294b7789b2621e3c9513dc513965c
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Thu Jun 25 15:47:50 2015 +0300
+
+    Quick fix for O2 portal remap some keycodes.
+    
+    Tested on O2 portal.
+
+commit f76ce53bda5aab9d7404ef0bffa47a2d18400d57
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Mon Jun 22 11:44:09 2015 +0300
+
+    Bugfix: Exposed the Output object to JS.
+    Removed for unknown reason in commit
+    b79f1c0f5737f5c5050eb4c47d74b4e360010261.
+    
+    Tested on DCD7045, over NFS.
+
+commit 8f61e5136fc21edf4a97b3a2986ba7e8c2db4d41
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jun 22 13:20:16 2015 +0200
+
+    m4024 Alining the channels and events on the guide page
+    bugfixed
+    updated because of a further bug with the lines
+    tested DCD7005 fsi and webserver
+
+commit c4179e66a43da119863a426b0d891c1222911960
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jun 22 13:04:51 2015 +0200
+
+    m4029 Alignments on several pages
+    bugfixed
+    tested DCD7005 fsi and webserver
+
+commit 249be229241a75934166226e0fcfae3c24920adc
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jun 22 11:47:53 2015 +0200
+
+    m4030 different font-families when changing the language
+    bugfixed
+    added that every language has the same font-family as long as they are not described with another font-family like chinese
+    tested DCD7005 fsi and webserver
+
+commit 088de762f8172f09fc19cab895d8aef0a75b03ec
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jun 22 10:43:34 2015 +0200
+
+    m4030 different Font-families when changing the language
+    bugfixed
+    tested DCD7005 fsi and webserver
+
+commit c5c1260b9bb6386e6caf1cf296aee2cfba208730
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Mon Jun 22 07:04:18 2015 +0200
+
+    m4024 Alining the channels and events on the guide page
+    bugfixed
+    tested DCD7005 fsi and webserver
+
+commit 749e810a47400384ed98f2b31eac99d972fd0486
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Jun 18 18:30:01 2015 +0300
+
+    Fix iponly builds
+
+commit 104952273b2bafec10dc514bd4b5fe16ff703015
+Author: Stam <stam@msi>
+Date:   Thu Jun 18 17:22:01 2015 +0300
+
+    Fix for build error of solid_app.
+
+commit 54037263ca5679b344002d89a75bb9e09f655094
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Thu Jun 18 15:59:22 2015 +0300
+
+    Updated Media Engine Network API
+
+commit 7cf920a16aaa45ddd8a5067114daf08ea7c2a297
+Author: Benjamin Seifert <benjamin.seifert@ekt-digital.com>
+Date:   Tue Jun 16 10:41:40 2015 +0200
+
+    m3983 Textlines are not aligned
+    m3975 Background of the caption of tables is displayed wrong
+    
+    bugfixed
+    
+    tested DCD7005 fsi and webserver
+
+commit f0dfd85c89c0c22b3635d178592d05e54d7be9b8
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Jun 5 17:29:29 2015 +0300
+
+    Add doc folder to gitignore cause it is rebuild on every commit
+
+commit 039a123ada69e6b3513f75043e63bdff20e201d8
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Jun 5 17:28:42 2015 +0300
+
+    Move QSettings::setPath to QSetting class contructor
+
+commit 4152beb7b0bcfa672c2bb8fd579fd4204b208b38
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Jun 5 13:09:13 2015 +0300
+
+    Introducing stbsettings_defaults.h header that
+    holds all the stb settings related definitions
+
+commit cb291859b79e7fb29c914e43f507d9b1ebd9269c
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Jun 4 19:54:32 2015 +0300
+
+    Wrapper: Introducing IS_HAL_SETTING, NOT_HAL_SETTING under settings
+    Wrapper: Introducing runtime configuration of m_hbbtv_enable through
+             solid_browser.conf file
+    
+             [Hbbtv]
+    	 Status={on,off}
+    
+    Code rewritten in order to dinstinct settings related to hal from those
+    that are related to browser (solid_browser.conf file).
+    
+    Also added all of those settings that are hal specific and where not
+    already under stbsettings.cpp (i.e NetworkType ), set/get functions
+    and the appropriate signals under coding conversion
+              set:storeSettingName
+    	  get:loadSettingName
+           signal:SettingNameStored
+    
+    Regarding Hbbtv/Status, when the solid_browser is built with hbbtv enable
+    the default value of Hbbtv/Status=on otherwise off
+
+commit a19914e57f8ed1649aa572a89453fcabe8da1b02
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Thu Jun 4 13:12:19 2015 +0300
+
+    Media Engine Channels API
+
+commit 788fecaec631126dfc3a5ea4d91804d961af7482
+Merge: 833c146 b16a2cd
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jun 4 17:59:51 2015 +0800
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 833c14647eafa1475b8a8a67fb62dc00abd00ee4
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jun 4 17:57:29 2015 +0800
+
+    M0003944: 003944:Account-->My Account--->service info/statement implementation
+    
+    Fix the bug the date format can't changed when change the language
+
+commit b16a2cd4320bd10d898454dc5b7b2924ce8432ef
+Author: Paul Zhong <paul_zhong@ekt-digital.com>
+Date:   Thu Jun 4 17:17:42 2015 +0800
+
+    Mantis 0003794: [solid2.0 UI] Account -> Message
+    Sync UI "Messages" with HKC's demo.
+    Todo:
+       1. Popup messagebox.
+       2. Scroll bar.
+
+commit 34dc6c32a4a16b15a58e3fb85899805401764229
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu Jun 4 16:26:44 2015 +0800
+
+    M0003944: 003944:Account-->My Account--->service info/statement implementation
+    implement the service info page and statement page as solidUI2.0 demo
+
+commit 5efc7420214dcbab1eb62285538fde1e0bcfa615
+Author: Stam <stam@msi>
+Date:   Wed Jun 3 12:56:30 2015 +0300
+
+    Mantis #3824: Solution part 1. We now check in the right place in the slot
+    whether hbbtv is enabled or not.
+
+commit d247cd21cdd82006ada212304c6e869c500af220
+Author: Stam <stam@msi>
+Date:   Wed Jun 3 12:28:44 2015 +0300
+
+    Mantis #3825: Fix for exception being thrown  "DVBType" was not found.
+
+commit ff74100d89d1fd3829b2444b8f5bcd050b94ada8
+Merge: a8ce407 da02fd4
+Author: Paul.Zhong <Paul.Zhong@ekt-digital.com>
+Date:   Fri May 29 03:19:49 2015 -0700
+
+    Merge branch 'master' of ssh://192.168.210.104:52424/ip4tv/solid
+
+commit a8ce4072f10b22bb2d281e80daf43a2f05d0a160
+Author: Paul.Zhong <Paul.Zhong@ekt-digital.com>
+Date:   Fri May 29 03:16:43 2015 -0700
+
+    0003911: [solid2.0 UI] Template -> Chinese/English font for HKC
+    
+    Replace "DFYuanMedium-B5.TTC" with "HKZY.TTF" for chinese in HKC template.
+    Becasue browser can't read ttc file.
+
+commit da02fd45d4c20e0c6ef6e2459f035bcc53f2bfaa
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Fri May 29 09:48:45 2015 +0100
+
+    Change location of HTML_OUTPUT in Doxyfile
+    
+    Changed to use a "local" directory to the build and to match
+    the location expected in the PKGBUILD.ali file.
+
+commit 65597de2bac4c5bb3cfa251747fa8518ea83efa4
+Author: Paul.Zhong <Paul.Zhong@ekt-digital.com>
+Date:   Thu May 28 06:12:23 2015 -0700
+
+    0003911: [solid2.0 UI] Template -> Chinese/English font for HKC
+    
+    Update the font "DFYuanMedium-B5.TTC" for chinese in HKC template.
+
+commit 42fcef5536af72e69dbde4a7ff43590355bb3fd7
+Merge: f0bb504 b313237
+Author: Paul.Zhong <Paul.Zhong@ekt-digital.com>
+Date:   Thu May 28 03:32:59 2015 -0700
+
+    Merge branch 'master' of ssh://192.168.210.104:52424/ip4tv/solid
+    
+    Conflicts:
+    	solid_UI2/templates/hkc/css/style.css
+
+commit f0bb504a4dd1c1ca0515da3d8762054f739f7d11
+Author: Paul.Zhong <Paul.Zhong@ekt-digital.com>
+Date:   Thu May 28 03:27:21 2015 -0700
+
+    0003911: [solid2.0 UI] Template -> Chinese/English font for HKC
+    Now push the commit.
+    Michael already helped to review it.
+
+commit b313237c157e1efd6d7992b5dcb0990e4bad8ff7
+Author: simon.zhou <simon.zhou@ekt-digital.com>
+Date:   Thu May 28 11:59:28 2015 +0800
+
+    Modified output.cpp to set aspect mode / conversion, modified VideoOutputPopUp.qml to disable restart video when set video output parameters.
+
+commit 0a37a1bd9fab756d1e4883948bb431b70ac96bea
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu May 28 11:00:12 2015 +0800
+
+    M0003915: The style of the menu is different from HCK demo
+    
+    remove the short space of items ,make sure the height of item.
+    modified the font family  provided the two kind of font on /solid.
+
+commit b1ab7759330cec0708b3512763daa8cd15e056b7
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Wed May 27 15:50:09 2015 +0800
+
+    M0003912: [solid2.0 UI] Menu -> menu structure is different from the design one
+    
+    Modefied the menu structure to the HCK menu
+
+commit 8f82ebaa8a0cb7db53e97616cac8734830b26e45
+Merge: 38e442d 98cc652
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Fri May 22 16:06:59 2015 +0800
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+    
+    :wq
+
+commit 38e442d9f7aaec769c633dfb2bd7354fb30628a7
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Fri May 22 14:19:07 2015 +0800
+
+    M0003865: [solid2.0 UI] Menu -> Change Submenu to display in first position "Back"
+    
+    Change the Submenu display in first position "Back" and can switched  with the language changed
+
+commit 98cc652f8c46cb4e97acb4253396c6c14b100995
+Author: Stam <stam@msi>
+Date:   Thu May 21 08:44:10 2015 +0300
+
+    Removed unecessary class.
+
+commit 46a4efac3e206fff596b678d254cbb3101fe152e
+Author: Stam <stam@msi>
+Date:   Thu May 21 08:36:46 2015 +0300
+
+    Removed unecessary module from the media engine.
+
+commit dbf09011ae46ae6ac6b11c8508d8ebf28c1dddd8
+Author: Stam <stam@msi>
+Date:   Thu May 21 08:27:18 2015 +0300
+
+    Tidy up code.
+
+commit a8700590567614eef12b5569e1395660d5646423
+Author: Stam <stam@msi>
+Date:   Thu May 21 07:45:40 2015 +0300
+
+    Removed unecessary files from the media engine folder.
+
+commit dcc5b7d2aebbd3e1f5383bbb4bc34856d93353ab
+Author: joe.luo <joe.luo@ekt-digital.com>
+Date:   Thu May 21 09:43:42 2015 +0800
+
+    M0003866: [solid2.0 UI] Menu -> Change Submenu to start with second menu point selected
+    
+    change on  solidUI/js/widgets/main_menu.js to modified the focus on submenu from the first items  to next one.
+    
+    have tested on firfox browser and it works well.
+
+commit 93c0b0a30ba07e7d32c7f148f2491b3c2c397f99
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Wed May 20 08:19:33 2015 +0200
+
+    m3800 solid2.0 Settings -> General Settings
+    
+    add missing solid_UI2/js/widgets/general_settings_screen.js file
+
+commit 0bce8aa0edb4c1169438dff1743037e88931d7c3
+Author: Michael Schwarzer <michael.schwarzer@ekt-digital.com>
+Date:   Tue May 19 17:20:43 2015 +0200
+
+    m3800 solid2.0 UI Settings -> General Settings
+    
+    last cahnges to General Settings
+    
+    not finished
+
+commit 3c36c9fe47d10ff91d29a605219ea7cb69995184
+Author: Stam <stam@msi>
+Date:   Mon May 18 13:13:44 2015 +0300
+
+    Refactored HBBTV code.
+
+commit f4d8ddcef81ba32fc1a30deb399f0704dec514fa
+Merge: b70b518 af240f3
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Fri May 15 16:27:30 2015 +0300
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit b70b518ace4d4034ff850618d536c60612e0c4f3
+Author: Nikos Maravitsas <nikos.maravitsas@eagle-kingdom.com>
+Date:   Fri May 15 16:27:02 2015 +0300
+
+    Media Engine Network API
+
+commit af240f3bba62b67e5f52ad576a84524d7f68f37a
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue May 12 14:27:58 2015 +0300
+
+    Fix compilation error if no conax support is enabled
+
+commit 3d0c14f4d147a18e63d91427315970bbbbf1a73b
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Mon May 11 11:53:53 2015 +0300
+
+    Fix compilation if we enable conax support
+
+commit 6cd2604b387a4e7723ac63286f88daf25609406c
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri May 8 13:47:40 2015 +0300
+
+    Remove forgotten debug log
+
+commit a36875a955e984d8299b20079461eb2ce8fa2b55
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu May 7 17:44:07 2015 +0300
+
+    Add libalislsbm,libalislotp to the list of ali libraries
+
+commit 9b8a9b1c28b70abf97b9101871d2bebe41eb2786
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu May 7 16:56:26 2015 +0300
+
+    Add support for envvar ALI_FS_PATH for better code navigation
+    Developer is responsible to export this envvar at will
+
+commit 611d85363fd7922be514e6b9db6e05447f9d113b
+Author: Michael Schwarzer <michael.schwarzer@ip4.tv>
+Date:   Thu May 7 13:53:36 2015 +0200
+
+    Fixed typo in solid_UI2
+
+commit b1c3160046866ad44352ae7389db81a25767f347
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu May 7 10:16:12 2015 +0300
+
+    Enable hbbtv trace on solid_browser
+
+commit d54b2a8d9d7047383f0544f523000f26fc0b2fc2
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Wed May 6 16:12:14 2015 +0300
+
+    Do not set url changed to webkit if the hbbtv_wbseturl says to redraw the currently displayed page
+
+commit 03d0712efea43cbc035e2d464a3a9ee435a81e3a
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Wed May 6 10:29:44 2015 +0300
+
+    Added the solid UI2 files.
+
+commit af736e7700bebe482737aa2fbccb7b89afdef861
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Wed May 6 09:32:50 2015 +0300
+
+    Added Media Engine API section in ekt_portal (test portal)
+    added the media_engine_scanner test page to demonstarte how the new API
+    of scanner is used.
+    
+    Tested on Desktop and dcd5225 over nfs, built on Debian 7.5.
+
+commit 2f5863cb958a6ba134045b07ad5a5fbee200ff0f
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Apr 30 15:25:20 2015 +0300
+
+    Fix mantis ticket #3756 issue 3
+    see https://wbt-mantis.com/view.php?id=3756#c45874
+
+commit f04026cd8f24d745850059d6b2fe938ec646744b
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Thu Apr 30 12:42:27 2015 +0300
+
+    updated the .gitignore file
+
+commit ee94641317a704d465368010555e94c76f3a42cc
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Apr 30 10:23:42 2015 +0300
+
+    Use the old m_ait_exist control logic inside function handleUrlChanged
+
+commit 6e2656bfe93fcd030a5b0fad0a3d610aeedc4474
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Wed Apr 29 12:33:24 2015 +0300
+
+    merge from kostas branch #3
+
+commit f1acd37dc96c4ca19359aaa9b66205a64902bc6a
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Apr 28 11:32:37 2015 +0300
+
+    merge from kostas branch #2
+
+commit 1b66900cf8258b2d654cf01fdc0f6a6ef999a397
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Apr 24 15:38:51 2015 +0300
+
+    merge from kostas branch
+
+commit a395122f8d0f6c111ebb3042fdb564afa7253069
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Apr 23 14:25:05 2015 +0300
+
+    DVB playback working (video to stam was taken from this commit)
+
+commit 77eb7ff870d1625e185ec51f619f15db0b63efd9
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Wed Apr 22 12:13:13 2015 +0300
+
+    Initial support for solid_ui2
+
+commit ad18b7ee402ffdcb84a3dd066dca0de91744e26e
+Author: allanchou <alan.chou@ekt-digital.com>
+Date:   Fri Apr 17 12:18:27 2015 +0800
+
+    M0003749: dcd7005, resolution setting issue.
+    
+    Fix setting issue of 1080i50Hz and 1080i60Hz.
+    
+    Tested on dcd7005 board using solidUI by nfs.
+    
+    Builded on desktop Ubuntu 14.04 LTS 64bit.
+
+commit f25abaa04f950a81fe8eda072b73717f820f752e
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Wed Apr 8 14:04:47 2015 +0300
+
+    Use generic hal definitions where ever is possible (stbnetwork)
+
+commit 8aba222b295875583e2a27de95bb506a3e423d59
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Apr 7 14:34:08 2015 +0300
+
+    Fix compilation error about some undefined HBBTV_ symbols
+
+commit 6227f1f2a5628d9f2805800e810786a530df0e2f
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Apr 7 14:17:34 2015 +0300
+
+    Fix compilation error regarding latest dtvkit after my faulty previous commit
+
+commit 2b088a953811912e1986e888ce100af476cb29c8
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Apr 7 13:22:54 2015 +0300
+
+    Fix compilation error with dtvkit upstream
+
+commit 1d043aca6e9d98ab41ec28a399cc0d3fa3294557
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Mon Mar 30 13:05:57 2015 +0300
+
+    o	Remove dummy commented code
+
+commit 34038a57326f9d5c2b20000593c81002de3b81d8
+Author: simon <simon.zhou@eagle-kingdom.com>
+Date:   Tue Apr 7 15:42:29 2015 +0800
+
+    m3723. fixed a channel lose issue.
+
+commit d3556b6f5f394e16a62286041d389d8a30ad260e
+Author: simon <simon.zhou@eagle-kingdom.com>
+Date:   Tue Apr 7 15:36:29 2015 +0800
+
+    m3555: add below functions support.
+    bool Standby::enterStandBy()
+    bool StbHal::startFactoryReset(int type)
+    int StbHal::getFactoryResetStatus()
+    int StbHal::getFactoryResetProgress()
+    bool StbHal::reboot()
+    bool StbHal::sysHalEnterStandbyMode(int mode)
+    bool StbHal::sysHalSetWakeUp(int seconds)
+    bool StbHal::sysHalLeaveStandbyMode(void)
+
+commit 744a5db3d083774398147d3fcefe4c6afd4f7b3e
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Wed Mar 18 11:25:21 2015 +0200
+
+    o	Introducing StbHal::getHDMode()
+    
+    	Although stbhal stores the saved display mode in the static variable
+    	m_displayMode, we need to check the real display mode through Output
+    	class cause stbhal use it.
+    
+    	The code must be changed when display mode will be setted directly from
+    	stbhal class
+
+commit f3fb8f6f3e31e2d71df264220cd76ff26e184125
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 17 18:16:53 2015 +0200
+
+    o	Initialize stbhal's output class
+
+commit 52a6bbd101c7bcdd9353a006c47603ebdf2b8701
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 17 18:15:19 2015 +0200
+
+    o	Add class output to stbhal for accessing Output::setScreenMode
+    	and avoid duplicate code for stbhal's setHDMode
+
+commit 0ef88c86efeb3a02d58674a65f327dfd2f41eb9f
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 17 17:54:31 2015 +0200
+
+    o	StbSettings::storeSetting save values on solid.conf files
+    
+    	From now on it will store settings to where hal also stores its
+    	configuration values
+    
+    	Reading will still be done through solid.conf
+
+commit 7966f0ab6e31bbf87c930f0d703a2c689fa36662
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 17 17:53:30 2015 +0200
+
+    o	Store resolution on Output::setScreenMode
+
+commit b2a7303779ae3deca08ce488fa06860be02646d9
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 17 17:52:24 2015 +0200
+
+    o	Typo fixed
+
+commit 81394d84eb2e84c4c40331c77b997f6c2bf5c406
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Mar 13 15:28:36 2015 +0200
+
+    o	hdd/media gui can handle multiple disk, multiple directories
+
+commit 915778f2ea0446f71406ccaf5398b76c476eb04f
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Mar 13 15:20:48 2015 +0200
+
+    o	Fixes in stbhal to support updated disk api and
+    	support for multiple disks - partitions on settings->hdd/media gui screen
+
+commit 26fa2a83394e0c06811299e589755992a0aab25a
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Wed Mar 11 18:35:25 2015 +0200
+
+    o	Fix bug with getLabel, getMountPoint hal functions
+
+commit fcdd6aab25964472c5b5c9d162ecc54d18ef9a1e
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 10 13:18:53 2015 +0200
+
+    o	Remove ++directfb_internal.h, not present in final filesystem
+
+commit d1ce9be6c6d9bdb45a02376a7a47d5423819c69c
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Tue Mar 10 12:50:51 2015 +0200
+
+    o	getFirmwareVersion must call Hal_Info_GetApplicationVersion
+
+commit bcc4af50712c092591e10f5bc44f619f1fd1604d
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Tue Mar 10 11:15:29 2015 +0100
+
+    Fixed crash of system screen in solid. Crash was caused by using invalid
+    Interface ID when no interface was active.
+    
+    	Tested with FSI.
+
+commit d4f861e7031fcbb6e29213b043092e4884f675b7
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Mon Mar 9 12:08:34 2015 +0200
+
+    o	Fix desktop shadow build compilation
+
+commit ec670db06cc186b3b44838777713d8e9fe074316
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Mon Mar 9 12:07:45 2015 +0200
+
+    o	Include hal_settings.h directly
+
+commit 3919292d2d33587cbe555d02d19e1540e5194870
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Fri Mar 6 13:08:44 2015 +0200
+
+    o	Use HAL_SETTINGS_PATHLEN instead of 255 value
+
+commit 729c15090f9868c8ad724f4817f4a80e19dc2b7c
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Mar 5 18:45:49 2015 +0200
+
+    o	Remove unneeded header
+
+commit 0b79c024f8054e710146112a747850790eaf44fc
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Mar 5 18:33:40 2015 +0200
+
+    o	Add missing header
+
+commit f57a6d08f61d0115bac51ce705977cc56ff70cc9
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Mar 5 18:23:43 2015 +0200
+
+    o	Fix memory leak in HalSettings_ReadString
+
+commit 34932a7c765732f9db6ca6cb63b54038a233ff40
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@ekt-digital.com>
+Date:   Thu Mar 5 18:14:47 2015 +0200
+
+    o	Remove debug output
+
+commit 6cde1e382bc2f3f2904292789003515dedbc1858
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Mar 4 14:58:03 2015 +0200
+
+    o	StbHal for Athens
+
+commit b79f1c0f5737f5c5050eb4c47d74b4e360010261
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Mar 4 15:28:49 2015 +0200
+
+    o	Merge stam's changes "Browser is converted to singleton"
+    	from kronos 4.3 master repository
+
+commit dce866fc726cec2320ee67ae6e187178c6cf4cbb
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Mar 2 14:10:30 2015 +0200
+
+    o	Merge stam's commit 01b271d50a80fc4df0bdc3bfba6feca95042d5c0
+    	from kronos_4_3 master repository
+
+commit d29fcb5c4f59195009bf3da7095af3c9b3d6d48d
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Mar 2 14:01:59 2015 +0200
+
+    o	Merge stam's commit 7d4af5eac79a3edef761a262fb59673c922408b2
+    	from kronos_4_3 master repository
+
+commit cdc9f8bad3a57c4ffe4020802ff7d0bb3fd425ad
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Mar 2 13:59:18 2015 +0200
+
+    o	Merge stam's commit cb672c87da38d05f93fe80dc46d257819951bccb
+    	from kronos_4_3 master repository
+
+commit f366b6e7dfaba3e795dea8d0a9406b797f8d538b
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Mar 2 13:55:07 2015 +0200
+
+    o	Merge stam's changes from kronos_4_3 master repository
+    	regarding webpluginfactory and local hbbtvplugin removal
+
+commit 58c09e184a27a4ecdf8d6f119ec3b7a97758057c
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Mar 2 13:38:13 2015 +0200
+
+    o	Merge c2b57d4c65385345c2d3cb341619f2329df770bb from kronos_4_3 master branch
+
+commit 26b402a333a67f4f502687057041b9bf3bf0a679
+Author: Stam <stam@msi>
+Date:   Tue Feb 24 14:52:53 2015 +0200
+
+    Mantis #3304
+
+commit e2d45260e4f6e5e1f63dd3ae32ffdd90b6cd2eaf
+Author: Stam <stam@msi>
+Date:   Tue Feb 24 12:25:40 2015 +0200
+
+    Not needed.
+
+commit 819dfa04583b5457d0c4dc3df45a73b3843213d0
+Author: Stam <stam@msi>
+Date:   Tue Feb 24 12:18:32 2015 +0200
+
+    Simplified things.
+
+commit c63da12c3260caceab6ecb4efc2d342c2ad8d49c
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Feb 20 16:02:37 2015 +0200
+
+    o	Add support for displayApi on portaltest
+    o	Add two testing html pages
+
+commit d61dca32d7de95a708164a9194e2eb8232057b86
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Feb 20 15:27:50 2015 +0200
+
+    o	Renamed mainwindow to browserqmlpluginmainwin to avoid missing QT signals.
+    	Backported from entropic master branch
+
+commit 9f868920e2cbf3d617873319cbe089cc39e72b08
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Feb 19 15:44:24 2015 +0200
+
+    o	Fix player window size when starting it through solid_app browserplugin
+
+commit d01e537bcc70927d16b6652650ac807aca375249
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Feb 19 12:49:19 2015 +0200
+
+    o	Do not activate dvb and play requested dvb service if it is not valid
+
+commit 13a528ec3fe1a63f72509c7e0bf019ad8545dc4c
+Author: Stam <stamatis.kapetanios@echovision.gr>
+Date:   Thu Feb 12 15:20:02 2015 +0200
+
+    Mantis #3513
+
+commit 9d8f59544479d309fb8eab025d190d71f1b7cf9f
+Author: simon <simon.zhou@eagle-kingdom.com>
+Date:   Wed Feb 11 14:46:29 2015 +0800
+
+    Added frontpanel display functions.
+
+commit 09f04d4e252b17f7ebd983b52bf1414c471709b0
+Author: simon <simon.zhou@eagle-kingdom.com>
+Date:   Tue Feb 10 18:38:08 2015 +0800
+
+    sync volume setting between ip and dvb, implemented mcuDisplayStr.
+
+commit c446c7807014e43c6e05c3ed6fc5009d71dacd6d
+Merge: e9b64df f2020f7
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Tue Feb 10 10:36:20 2015 +0100
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit f2020f72f3e0c601f2ba1e28e7cd461b727735de
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Tue Feb 10 11:38:28 2015 +0200
+
+    o	Typo fix
+
+commit e9b64df6b78b5f4fbe8060442c870985006e5cc9
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Tue Feb 10 10:35:29 2015 +0100
+
+    M3363: Added update api in solid.
+
+commit 5eb2aeec7458f42b824f078e1a297a81887686b5
+Merge: 1701a24 300642f
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Jan 30 17:41:40 2015 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 300642fad242d511b27d2cbbc38ebef64089b4d9
+Author: stam <stam@stam-msi.(none)>
+Date:   Fri Jan 30 17:35:17 2015 +0200
+
+    Mantis #3485
+
+commit 1701a24a71c0c5f5151b28195d6245c5129e17f2
+Author: Giorgos Chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Jan 30 10:09:12 2015 +0200
+
+    o	Enable Hal_Disk_NumAttached in getDiskNumber
+
+commit c73604b45f1a92c1b40d0080972fc3de8bdfebaa
+Merge: 0997e4e 513cfb0
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Jan 22 15:31:32 2015 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 0997e4ea2c6d966ec5d70cee912ccc4b4d9a9101
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Jan 22 15:30:56 2015 +0200
+
+    Just display browser related error messages on the console.
+
+commit 513cfb049569819d51c7d513e19711090b1cae43
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Thu Jan 22 13:25:30 2015 +0100
+
+    M3515: 	Added automatic network reconnect in solid_app.
+    	Solid reconnects now automatically with last used
+    	settings if /opt/data/settings/Network.NetworkType exists.
+
+commit d949058fcdbca268e659b8d560d004641ca49e64
+Merge: db83955 5db7013
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Thu Jan 22 12:13:04 2015 +0100
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit db839550f1eaa073c04ba46bada2880bc49cda02
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Thu Jan 22 11:19:08 2015 +0100
+
+    M3515: Bug fixing and logout improvements for network settings.
+    
+    	Tested with image on dcd7045.
+
+commit 5db70134d3f2eb025f86b2c0b8997608f52f77ac
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Tue Jan 20 17:40:05 2015 +0200
+
+    o	Relink solid_app if one of its .a dependencies are updated
+
+commit 66d96f80c1dd544a14f51ada36ecf43a81edad02
+Author: stam <stam@stam-msi.(none)>
+Date:   Tue Jan 20 14:55:15 2015 +0200
+
+    Do not render an HTML page with an error.
+
+commit 7fc521b41c8f12aba407d9e3dc581ddd48fec665
+Author: Markus Held <markus.held@ip4.tv>
+Date:   Tue Jan 20 11:59:54 2015 +0100
+
+    M3515: Added calls to net hal in solid_wrapper.
+    
+    	Build tested with ubuntu14.04 i686.
+
+commit 38fdb68ba7ef6e2eca05fcdca6e1707d61bc66a7
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Tue Jan 20 08:09:44 2015 +0200
+
+    o	Fix IP only stb builds
+
+commit 79560bdf37293d9fa4afcd69fc61c263f1d667b0
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Jan 19 19:03:22 2015 +0200
+
+    It now properly builds for DVB builds. IP only still does not build.
+
+commit 96b0c4b3f70f69c8a03ddf5361aaac81074a0e82
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Jan 19 18:26:21 2015 +0200
+
+    It properly builds for desktop and platform.
+
+commit c3925e456faf7f86fa052fda42bd06eea89345d8
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Jan 19 18:05:10 2015 +0200
+
+    Fix for the build errors.
+
+commit 52f48a1084c01c1a02ac1958a83381b0ec7d52b0
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Jan 19 16:49:59 2015 +0200
+
+    o	Remove unneeded header file
+
+commit 0da56569e991afc304799b9ffe896e718b71850c
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Jan 19 16:36:53 2015 +0200
+
+    o	Relink solid apps in case of updated libhbbtv library
+
+commit fd3c01890fb200b8552f0f7916b91752d0b34f27
+Merge: 4ab15c1 037cf34
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Jan 19 15:50:46 2015 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 4ab15c1f279b8aec1e9e17f6b602b479eae5a11b
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Jan 19 15:49:59 2015 +0200
+
+    It is now in sync with HAL.
+
+commit 037cf3406bf56050cbc828a1b9544470cbb5d86e
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Jan 19 13:54:46 2015 +0200
+
+    o	Fix desktop compilation
+
+commit f79942ca00707b50c59eb136b870bbe7025f913f
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Jan 16 11:14:45 2015 +0200
+
+    o	Add hbbtv support to solid_app
+    
+    	Merge entropic solid repo with ali (commit 1d685b3e96a17bec45f85fbebd4b46b5fff08f06 2015/01/14)
+
+commit 855ed6b06ee02babf72161d3d37aa295906af354
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Wed Jan 14 15:12:51 2015 +0200
+
+    Mantis #3358: Bug in stbhal and sw_pvr
+    
+    Not Tested for entropic.
+    Test if build OK for Ali and desktop.
+    Built using Debian 7.5 i 686.
+
+commit a68ab1e614d88744a9a6403aad8cedb46fb8b55f
+Merge: bdc621f 6687fb1
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Tue Jan 13 17:12:27 2015 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit bdc621fa4af17635bce3d5b782a2f24cf7c3ec3b
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Tue Jan 13 17:01:50 2015 +0200
+
+    Mantis #3358: Bug in stbmediaapi.cpp
+      for pvr and timeshift.
+
+commit 6687fb10a29319ab387322decffeac121ca04eb1
+Author: stam <stam@stam-msi.(none)>
+Date:   Tue Jan 13 17:06:40 2015 +0200
+
+    evo3hal is now linked towards the end to avoid linker errors.
+
+commit 211ec76df38308b845657c33b3a6ad70b0431e00
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Jan 9 17:31:36 2015 +0200
+
+    o	(ksiour) typo fix
+
+commit 3db054c43db17638003acb6b72642648731b184d
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Fri Jan 9 16:46:03 2015 +0200
+
+    Output modes of ali now call into hal. (not aui)
+      output of desktop is identical to ali and calls into desktop hal.
+      >cd scratchbox/build/pkgbuild/hal/evo3hal/src.ali/chilpset/linux/desktop
+      >make install
+      to get hal libraries for desktop
+    WARNING this commit breaks build:
+      hal headers and libs have changed place, update you hal
+    
+    Tested on Desktop and M3733 over NFS.
+    Built on Debian 7.5.
+
+commit 3b0099874c660b774fccc7d2f27a81d1a62c3be8
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Tue Dec 30 15:31:06 2014 +0200
+
+    Ali Porting. Updates in Video Modes
+     - Added Hal_Video_HdmiGetPreferredMode() to get the native
+     tv monitor resolution over hdmi.
+     - Updates in ekt_portal, highlight unsupported modes,
+     changed the looks of the UI, added the native tv resolution as an
+     option.
+    
+    Tested on M3733 over NFS, using solid_browser - ekt_portal
+    built on Debian 7.5 i686 newBS.
+
+commit d5e1234f083a7275e1c10675b4ca84dd3cf5ffd2
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Thu Dec 18 17:48:58 2014 +0200
+
+    Volume Issues:
+     - Updated the ekt portal for audio volume testing
+     - Registered the volume keys to webview
+    
+    Volume seems to work ok now.
+
+commit 787fc9d6296b80febc897f513264cb6f118d729d
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Dec 18 16:31:10 2014 +0200
+
+    Added the streaming stuff.
+
+commit 4c214a595243b4511b8a2f1154ae1d567cfece73
+Merge: d685b72 96eb568
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Dec 18 14:49:37 2014 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit d685b72ebc1fd0d29490406431a8ce9227598ee5
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Dec 18 14:49:16 2014 +0200
+
+    Fix for errors.
+
+commit 96eb56842beaf81394e37430b8825d2c75a03f79
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Dec 18 11:26:59 2014 +0200
+
+    o	Link solids with dynamic libplayer instead of static
+
+commit 0c05b658d20b7e25581592017eb605d20b50fb41
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Mon Dec 15 19:07:57 2014 +0200
+
+    EKT Portal: Fix text font colour when there is no background.
+
+commit e38d7976245b0578520393290608176ff7729336
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Mon Dec 15 18:42:07 2014 +0200
+
+    Mantis #3360: Updated ekt_portal
+    with only supported modes.
+    
+    Tested on ali m3733 over NFS using ekt_portal, built on Debian 7.5 i686
+    NewBS.
+
+commit 92df4bc4423dfcd457781865430afb59b77db0e3
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Mon Dec 15 18:32:36 2014 +0200
+
+    Mantis #3360: Video Output Modes
+    
+    Bugs:
+     - SECAM mode not supported my Ali
+     (Not a valid mode any more, box would crash)
+     - PAL60 distorted, ali will provide fix.
+    Tested on ali m3733 over NFS using ekt_portal, built on Debian 7.5 i686
+    NewBS.
+
+commit b544e9da93ba94e560fd84c5f09b7deca28c9bf5
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Wed Dec 10 16:29:36 2014 +0200
+
+    Mantis #3360: Output ScreenModes for ALi revisited.
+    - Corrected reporting of resolution values.
+    - Updated ekt_portal to test all screen modes
+    - Bugs: SECAM and PAL-60 not OK, ALI to fix them
+    
+    Tested on Ali m3733 over NFS, built on Debian 7.5 i686 (New BS).
+
+commit dcadeb7431b3dc9ee4960792b292b21bc301b917
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Dec 10 14:53:50 2014 +0200
+
+    o	Typo fix
+
+commit c4de522595a9af45fe85ad2d4c9e6d8f9ff7bf31
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Wed Dec 10 14:25:47 2014 +0200
+
+    Mantis #3360: Video Output Modes
+     Added the b_progressive for scan modes.
+    
+     NOT TESTED if build.
+
+commit 255d61d5283b0cea54371ebda842f283603b3429
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Dec 10 12:29:39 2014 +0200
+
+    o	Relink the solid_browser in case of libplayer.a update
+
+commit dc2f4396c4135a81d514632893735eae61788278
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Dec 10 12:28:55 2014 +0200
+
+    o	Fix gfx resolution error when changing the monitor resolution
+
+commit 53f219f1a04013cf4475ce2fbfd18ff4bbb846b6
+Merge: cab541d 2f1ce18
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Dec 4 17:06:57 2014 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit cab541dc408c1947f725d21cd06515b846bf852d
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Dec 4 17:06:23 2014 +0200
+
+    First version of the test portal (IP only for the time being)
+
+commit 2f1ce182c12e20cb447c5e7a15a50b9668bc0709
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Thu Dec 4 15:47:28 2014 +0200
+
+    Mantis #3275 : Wrong Key enumeration in Teletext.qml
+    Tested on DSD5205 over NFS.
+    Built on Debian wheezy 7.5 i686
+
+commit 7e7a266f1d997329ef6ae2f457645af889af7e2e
+Author: stam <stam@stam-msi.(none)>
+Date:   Wed Dec 3 14:27:46 2014 +0200
+
+    Desktop now compiles again.
+
+commit 1b39c4e05d2e915399461055a2cd0e7634acc788
+Author: stam <stam@stam-msi.(none)>
+Date:   Wed Dec 3 14:24:25 2014 +0200
+
+    We now initialise the HAL as part of the constructor.
+
+commit a411ec57f19907e5541880c84b634af1c331eeb4
+Merge: 4ec0873 890c937
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Dec 1 13:39:40 2014 +0200
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 4ec0873f7b6b3e83379f5c24ffbfabc61f59ae27
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Dec 1 13:39:17 2014 +0200
+
+    Decrease verbosity.
+
+commit 6927401024db76b7c1ffb7d8a6a848d3e80ebae5
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Dec 1 13:38:19 2014 +0200
+
+    Added callback to JS on play state cnange
+
+commit a7ea58bd25906e6ab5f67f33a808d9a939010900
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Dec 1 13:36:39 2014 +0200
+
+    Expose the "output" object.
+
+commit 890c9379aef8d2e6db09be8fadd7b763797e3ad1
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Nov 28 12:32:04 2014 +0200
+
+    o	Fix compilation with/without dvb support for ali
+
+commit 7ce01f31e5c42d621054532f499942d7b073cca6
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Wed Nov 26 16:13:21 2014 +0200
+
+    o Fix solid compilation for not DVB builds
+
+commit 7c8b1007616c40ea44eeaefa000af2a27c316bea
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Nov 26 14:07:12 2014 +0200
+
+    o	Fix runtime error if we try to start browser from solid_app
+
+commit 7d25ee59a8ef7644a892a578cc82c46a5da7e150
+Author: stam <stam@stam-msi.(none)>
+Date:   Wed Nov 26 12:54:20 2014 +0200
+
+    simplified conditionals in project files.
+
+commit f767288d9f697f42e87aff56cef47604ca55c323
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Nov 14 17:43:26 2014 +0200
+
+    o	missing dependency for libevo3hal (lxml2 and lsoup-2.4)
+
+commit a6186b9030f883a4fc045fd24243206e2df8c506
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Nov 14 17:31:52 2014 +0200
+
+    o	Remove code form old evo3hal
+
+commit 760dcc78ef0e9db3c98bc1b5a2c7166bd3a93bcd
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Fri Nov 14 14:22:35 2014 +0200
+
+    Mantis #3360: Ali Porting Video Output
+    
+      Managed to get some video output modes to work. Currently Ali
+      has provided headers that cause build errors so code is commented out.
+      To be brough back in when ali fixes headers.
+    
+    Tested on DCD7405 over NFS, build on Debian 735 i686.
+
+commit 80aab4c11bfda9ce472df970b65768ac0e5e84a3
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Nov 14 11:35:03 2014 +0200
+
+    o	Fix solids shadow builds for host box through qtcreator
+
+commit 01c21dc5b63ca346d6a2253939154c35bc514796
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Nov 13 18:16:26 2014 +0200
+
+    o	Update solid.pri to include libevo3hal from the new hal package
+
+commit 9e5a3aea710c4a5b5aef60633a8893db98e034a5
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Nov 13 17:55:09 2014 +0200
+
+    Broke the chain from the old hal.
+
+commit 6d0b632b711a946e9adb158f11114b6ca7b343b6
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Nov 13 14:55:08 2014 +0200
+
+    o	Fix gu.clean
+
+commit 2ac7f475616b637659453528c92cc3fe9bca587b
+Author: stam <stam@stam-msi.(none)>
+Date:   Thu Nov 13 11:14:29 2014 +0200
+
+    It now builds ip only.
+
+commit 70442eeb24d9e7b45b7d4c6aefcdf49bf5e8f196
+Author: simon <simon.zhou@eagle-kingdom.com>
+Date:   Mon Nov 10 18:05:11 2014 +0800
+
+    The previous modifications are not necessary, revert them back.
+
+commit b50b501815c24437a9943d95946c9e6dbc6971a1
+Author: simon <simon.zhou@eagle-kingdom.com>
+Date:   Mon Nov 10 17:19:52 2014 +0800
+
+    Fixed a issue: after dvb live play, play media/ip failed.  the solution is: enter live play, call dvb.activate(); exit live play, call dvb.standby();
+
+commit f48f7fac8b427eb46fd082f75611e2088455960b
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Nov 6 17:39:36 2014 +0200
+
+    o	Remove initial DELETEME file
+
+commit e9c4d232b269d8c1a77cf01301c995703f0241c7
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Nov 6 17:27:55 2014 +0200
+
+    o	Dummy fix. add forgotten ;
+
+commit fd76750714d29bc18e909506dd96672a0ac4eb62
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Nov 6 16:42:58 2014 +0200
+
+    o	Fix compilation error if CONSOLE_INFO is not defined
+
+commit a3fec6f278a0ddcdebb37679cae03a055928f124
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Nov 6 16:42:21 2014 +0200
+
+    o	Update ip4.clean to src.$TARGET_ARCH schemanti
+
+commit 0adf17ea13ddc1d15cf43504aabe3821e9fc0e2a
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Oct 22 16:35:48 2014 +0300
+
+    o	Relink solids if piper update its target libplayer.so
+
+commit 3ce90974e35aa075a120cb5a537ad46c2286435c
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Oct 22 16:30:28 2014 +0300
+
+    o	Relink solids if dtvkit update its target libraries
+
+commit 6357478f4382535725df68fe371cd1fa2a1bb70b
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Oct 22 16:19:45 2014 +0300
+
+    o	Update ip4.clean script for usage with the BUILDDIR_SUFFIX makepkg envvar
+
+commit 74e2c724c696f59b24f138b895ca7813f635d31f
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Oct 16 15:54:16 2014 +0300
+
+    o	Fix compilation error for entropic with dvb support
+
+commit ecb30aa4d75d007c3f825bd705c93f81af90538a
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Oct 16 12:45:01 2014 +0300
+
+    o	Fix solid_app compilation for ali,entropic and desktop shadow builds
+
+commit 896f691e7343237f34261eb55e8c47c2c094a8f6
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Oct 15 16:37:15 2014 +0300
+
+    o	Add support for shadow builds through qt creator
+
+commit 479057e1e52bd7001addfef45f63c56364141e5d
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Wed Oct 15 13:35:50 2014 +0100
+
+    Fix typo in solid.pri
+
+commit 5b285af0a9e9594f9947322cc5e99b6e15f74684
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Wed Oct 15 10:06:52 2014 +0100
+
+    First attempt at getting solid_browser to build using the new build system.
+
+commit a9cc46512abef577d098bfaccdf39871db144184
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Oct 13 17:54:46 2014 +0300
+
+    Added dependencies to the static libs.
+
+commit 2a3973caa041564cb0b634b0a39a924a1593653f
+Author: stam <stam@stam-msi.(none)>
+Date:   Mon Oct 13 16:31:11 2014 +0300
+
+    Removed the browser window.
+
+commit fc3d57819e40f8cbe09d653ccb96f1a4be018c77
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Tue Oct 7 17:29:12 2014 +0300
+
+    o	Do not compile hbbtv.cpp yet
+
+commit 2621163ece6062beb52a911a61834d8043cbcfc1
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Tue Oct 7 16:57:44 2014 +0300
+
+    o	Fix solid.pri after changes in piper installation path (usr/include/piper and usr/lib/piper)
+
+commit 85950e0a60164b0b8cd65d3239a11089006de771
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Oct 6 18:10:16 2014 +0300
+
+    o	Remove any relations from solid_wrapper/media/PlayerSDK*. They are installed in the new target filesystem
+
+commit c60c5a8c7430f5d6ee6aa3091e21c3826d290c4b
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Oct 6 18:03:02 2014 +0300
+
+    o	Fix compilation warning
+
+commit 8db37708f9085134ea954fc640eb0b1e1875b387
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Oct 6 18:00:52 2014 +0300
+
+    o	Make solid_wrapper media architecture agnostic. Merge previous ali and stb to stb folder
+
+commit 5f2667613ac52ae196e5a2117281b635c5a53606
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Oct 3 15:34:37 2014 +0300
+
+    o	Fix compilation for solid_app
+
+commit 38df51d1c3c5b18c81df0ac0f6c9cf7dc53ef475
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Oct 3 14:27:24 2014 +0300
+
+    o	SolidWrapper: merge ali folder to stb where it is valid (not in media and hal for now)
+    
+    	From now on the valid configuration option that the solid will accept as platform description are
+    		ali, entropic, desktop
+    
+    	Remove stb, it will implicitly enable by ali or entropic configuration options
+
+commit a1de480d40713bee6be801b1a3974f2504a325ae
+Merge: f88e781 7f5d272
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Fri Oct 3 08:05:09 2014 +0100
+
+    Merge branch 'master' of ssh://217.7.237.196:52424/ip4tv/solid
+
+commit 7f5d272be9fd9911cf87013e6eb2fab2b1873314
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Thu Oct 2 17:28:31 2014 +0300
+
+    Player Libraries
+      Set Window, pause, resume and buffering work.
+
+commit f88e7810000f83a19da7a46211d2fe8ef489a1b0
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Thu Oct 2 14:40:41 2014 +0100
+
+    Comment out QMAKE_POST_LINK copy (until we know what is meant to happen)
+    Fix ip4clean script to be more portable
+
+commit 9fa30b3b6956d00e43322e9d677f10dc82ae63e9
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Thu Oct 2 14:33:02 2014 +0100
+
+    Fix paths for LIBSOLIDWRAPPER_DIR variable and includes
+
+commit 7b0a7571f1e608b52a6e938e0f7b024aa0de26b6
+Author: Tim Everett <tim@23across.co.uk>
+Date:   Thu Oct 2 14:21:21 2014 +0100
+
+    First attempt at an entropic build
+
+commit 92884e8cb088449c4d7e18fb09f3c7568993c393
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Thu Oct 2 11:59:41 2014 +0300
+
+    o	Initial dvb support for solid family
+
+commit 0e76c4e448cde1f24d6fb7be236c438e2a2ec828
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Sep 29 18:02:15 2014 +0300
+
+    o	Enable solid_{browser,app} shadow build compilation
+
+commit 45b9d8d25a704dedd27a1765ba039517a5513248
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Sep 17 00:24:24 2014 +0300
+
+    o	Update .gitignore for solid_app
+
+commit c8bcde9ddf5891f9377a112a1b89b8239228917f
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Tue Sep 16 18:37:14 2014 +0300
+
+    o	Build solid_wrapper inside solid_browser solid_app instead of individual package
+
+commit 4ecc7fe4874a4fae6d1adbd0f6d60b00c066dd27
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Sep 12 14:06:13 2014 +0300
+
+    o	Typo fixed
+
+commit ea844e6a94fe912e0fcb8d3fe472d6217c716752
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Fri Sep 12 14:02:49 2014 +0300
+
+    o	ali's solid.pri cleanup from code related with entropic
+
+commit 871917a303f56a74911639e13ce338a88f7cfb47
+Author: Kostas Siourounis <Konstantinos.Siourounis@eagle-kingdom.com>
+Date:   Fri Sep 12 11:00:40 2014 +0300
+
+    Player Libraries for ALi.
+    
+    Playback works.
+    
+    TODO:
+     stop
+     setRectangle
+     get PTS etc...
+
+commit b48658f9fda9ff7bce88eb8d47dcbc3e4376bd89
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Sep 10 18:09:08 2014 +0300
+
+    o	Solid browser successfull compilation
+
+commit dc38983838d0847620647b6dbb8ca6995de2c789
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Sep 10 17:54:14 2014 +0300
+
+    o	Update libplayer
+
+commit a48d940561be3a161fd5cc842b7941e1f5e27d45
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Sep 10 15:36:56 2014 +0300
+
+    o	Add piper sdk for ali generated by ksiour (in an attempt to build solid_browser)
+
+commit 50a15c9d428b464129646c1e3c1c1c37031b7fb2
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Wed Sep 10 14:06:37 2014 +0300
+
+    o	Solid wrapper for ali successfull compilation
+
+commit d6c3750cc6c4f58d20625d1973dcec73c14b2b4c
+Merge: d534871 58003a4
+Author: stam <stam@stam-msi.(none)>
+Date:   Fri Aug 29 16:24:51 2014 +0300
+
+    Merge branch 'master' of ssh://192.168.1.7:2222/home/ghatz/developer/alitest/solid
+
+commit d5348718b051853650183e26361a26ad731ef7bf
+Author: Ralph Kästner <ralph.kaestner@ip4.tv>
+Date:   Tue Aug 26 11:16:31 2014 +0200
+
+    Initial commit
+
+commit 58003a499f93615647925d220aca21b97c32ddb8
+Author: giorgos chadjipavlis <giorgos.chadjipavlis@eagle-kingdom.com>
+Date:   Mon Aug 25 16:09:02 2014 +0300
+
+    o	Initial solid {wrapper,browser,player} repository

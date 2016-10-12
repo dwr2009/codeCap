@@ -1,0 +1,9 @@
+.curtainNotify{
+	visibility:hidden; 
+	position:absolute;
+	left:20%;
+  top:20%;
+	width:60%;
+	height:60%;
+	background: url( '../../images/curtain.png' ) repeat;
+	}

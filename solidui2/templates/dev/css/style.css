@@ -1,0 +1,116 @@
+* {
+	margin: 0 ;
+	padding: 0 ;
+	border: 0 ;
+}
+
+body {
+	font-family: verdana, sans serif;
+	font-size: 12px;
+	color: gray;
+}
+
+.widget {
+	display: inline-block;
+	border: 1px dashed gray;
+	border-radius: 5px;
+	padding: 10px;
+	margin: 10px;
+}
+
+
+.list_view_delegate {
+	display: block;
+}
+
+.list_view_delegate.selected {
+	color: red;
+}
+
+
+.select_view.active {
+	color: blue;
+}
+
+.select_view > div {
+	display: inline-block;
+}
+
+
+.clipper {
+	padding: 10%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+
+#epg * {
+	box-sizing: border-box;
+	white-space: pre;
+}
+
+#epg .grid {
+	width: 600px;
+	height: 400px;
+
+	overflow: hidden;
+}
+
+#epg .timeline {
+	width: 80%;
+	margin-left: 20%;
+	height: 5%;
+
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	position: relative;
+}
+
+#epg .row {
+	width: 100%;
+	border-top: 1px solid gray;
+	position: relative;
+}
+
+#epg .row:nth-child(1) {
+	border-top: none;
+}
+
+#epg .channel, #epg .events {
+	float: left;
+	clear: none;
+	height: 100%;
+}
+
+#epg .channel {
+	width: 20%;
+	background: silver ;
+}
+
+#epg .row.selected .channel {
+	background: pink;
+}
+
+#epg .events {
+	width: 80%;
+	height: 100%;
+	border-right: 1px solid gray;
+	overflow: hidden;
+}
+
+#epg .events table {
+	height: 100%;
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+#epg .event {
+	overflow: hidden;
+	text-align: center;
+	border-left: 1px solid gray;
+}
+
+#epg .pointer {
+	height: 100%;
+}

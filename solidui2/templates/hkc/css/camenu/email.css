@@ -1,0 +1,210 @@
+#email{
+	padding-top:5%;
+	padding-left:5%;
+	padding-right:5%;
+}
+
+#email .panel{
+    margin-top:1%;
+    font-size:20px;
+    }
+#email .column_fifteen{
+	padding-left: 2%;
+}
+#email .selected {
+    background-color: #4794c5;
+    color:white;
+}
+#email .listlable{
+	width:100%;
+	height:85%;
+	background-color: rgb(43, 43, 43);
+}
+
+#email .caption{
+	padding-top:20px;
+}
+#email .deleteEmailDlg{
+	position:absolute;
+	left:20%;
+	top:20%;	
+}
+
+
+.email_listlable{
+	//margin-top:5px;
+	white-space: pre;
+	overflow:hidden;
+	width:100%;
+	height:40px;
+	border-bottom:2px solid rgba(255,255,255,0.35);
+}
+		
+.emailicon_readed{
+	display: inline-block;                	
+	width: 30px;                                              
+	height: 29px;                                           
+	float:bottom;                                              	
+	background:url( '../../images/mail_readed.png' ) no-repeat; 	
+}
+	
+.emailicon_unread{
+	display: inline-block;                	
+	width: 30px;                                              
+	height: 29px;                                           
+	float:bottom;                                              	
+	background:url( '../../images/mail_unread.png' ) no-repeat; 	
+}
+ 
+.emailicon_none{
+	display: inline-block;                	
+	width: 30px;                                              
+	height: 29px;                                           
+	float:left;                                              	 	
+}
+
+#email .emailBox {
+  position: absolute;
+  top: 20%;    
+	width: 86%;
+	height: 35%;
+	padding-top: 1%;
+	background-color: rgb(43, 43, 43);
+	border: 2px solid rgba(232, 242, 248, 1);
+}
+
+#email .emailBoxrow{
+	height: 15%;
+	margin-left: 2%;
+}
+
+#email .emailBox_titlename, #email .emailBox_createtimename, #email .emailBox_importancename, #email .emailBox_contentname {
+    color: rgb(206, 215, 219);
+    font-size: large;
+    height:100%;
+    width:15%;
+}
+
+#email .emailBox_title, #email .emailBox_createtime, #email .emailBox_importance {
+		color: rgb(206, 215, 219);
+    margin-left: 15%;
+    height: 100%;
+    width:80%;
+    font-size: large;
+    margin-top: -5%;
+}
+
+#email .emailBox_content {
+    color: rgb(206, 215, 219);
+    word-wrap: break-word;
+    font-size: larger;
+    margin: auto 0;
+    margin-left: 15%;
+    margin-right: 6%;
+    margin-top: -5%;  
+}
+	
+#email .remindlable{
+	position:absolute;
+	left:0%;
+	top:90%;
+	width:50%;
+	height:5%;
+}
+
+#email .remindlable .redwarning{
+	display:inline-block;
+	margin-left:20%;
+	width:6%;
+	height:40%;
+	border-radius: 2%;
+	background-color:#ff0000;
+}
+
+#email .remindlable .redwarningtext{
+	display:inline-block;
+	text-align:left;
+	margin-left: 2%;
+	padding-bottom: 2%;
+	width:20%;
+}
+
+#email .remindlable .greenwarning{
+	display:inline-block;
+	width:6%;
+	height:40%;
+	border-radius: 2%;
+	background-color:#00ff00;
+	}
+#email .remindlable .greenwarningtext{
+	display:inline-block;
+	text-align:left;
+	margin-left: 2%;
+	padding-bottom:2px;
+	width:30%;
+	}
+
+#email .email_last_lable{
+	position:absolute;
+	top:80%;
+	left:0%;
+	width:100%;
+	height:5%;
+}
+#email .email_last_lable .column_three{
+	display:inline-block;
+	width:33.3%;
+	text-align:center;
+	padding-top:1%;
+}
+#email .count_total{
+	margin-left: 40%;
+	text-align:left;
+}
+
+#email .page_turning_list_view .remind{
+	position:absolute;
+	left:50%;
+	top:90%;
+	width:50%;
+	height: 5%;
+}
+
+#email .page_turning_list_view .remind .remind_left{
+	display: inline-block;
+	background:-webkit-radial-gradient(center,rgb(67, 67, 67),rgb(3, 3, 3));
+	float:left;
+	width:20%;
+	height:40%;
+	border-radius: 2%;
+	padding-bottom: 4px;
+}
+
+#email .page_turning_list_view .remind .pageNext{
+	display: inline-block;
+	padding-bottom: 2px;
+	margin-left: 2%;
+	width: 30%;
+}
+
+#email .page_turning_list_view .remind .pagePrev{
+	display: inline-block;
+	padding-bottom: 2px;
+	margin-left: 2%;
+	width: 30%;
+}
+
+#email .column_sixty{
+	text-align:left;
+}
+
+#email .column_four{
+	text-align:left;
+}
+
+
+#email .page_turning_list_view .column_three{
+	width:20%;
+	text-align:center;
+	margin-left:40%;
+}

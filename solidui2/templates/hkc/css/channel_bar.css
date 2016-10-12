@@ -1,0 +1,49 @@
+#channelbar {
+	position: absolute;
+	left: 10px;
+	bottom: 45%;
+	z-index: 99; 
+	width: 25.9%;
+	}
+	
+#channelbar .arrow_left {
+	background: url( '../images/menu_arrow_back.png' ) no-repeat center center;
+	height: 45px;
+	width: 35px;
+	float: left;
+	}
+	
+#channelbar.selected .arrow_left {
+	background: url( '../images/menu_arrow_selected_back.png' ) no-repeat center center;
+	height: 45px;
+	width: 35px;
+	float: left;
+	}
+	
+#channelbar .arrow_right {
+	background: url( '../images/menu_arrow.png' ) no-repeat center center;
+	height: 45px;
+	width: 35px;
+	float: left;
+	}
+	
+#channelbar.selected .arrow_right {
+	background: url( '../images/menu_arrow_selected.png' ) no-repeat center center;
+	height: 45px;
+	width: 35px;
+	float: left;
+	}
+	
+#channelbar .name {
+	margin-left: 2%;
+	margin-right: 2%;
+	width:230px; 
+	padding-top: 10px;
+	color: white;
+	font-size: 25px;
+	float: left;
+	text-align: center;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	}

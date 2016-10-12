@@ -1,0 +1,82 @@
+
+#messages {
+	margin-top:5%;
+	margin-left:5%;
+	margin-right:5%;
+}
+
+#messages .message_table {
+	
+	width: 100%;
+	height: 80%;
+}
+
+#messages .caption {
+	padding-top:2%;
+	padding-left:0;
+	font-size:22px;
+	color:#808080;
+	width:100%;
+	height:10%;
+}
+
+#messages .message_rows {
+	height: 90%;
+	width: 100%;
+	overflow-y: auto;	
+	color: silver;
+}
+
+#messages .message {
+	padding-top:5px;
+	padding-bottom: 5px;
+	font-size:20px;
+	width:100%;
+	margin-top:-1px;
+	padding-left:0px;
+	padding-top: 10px;
+	border-left:2px solid rgba(255,255,255,0.35);
+	border-bottom:2px solid rgba(255,255,255,0.35);
+	border-right:2px solid rgba(255,255,255,0.35);    
+}
+#messages .message:first-child {
+	border-top: 2px solid rgba(255,255,255,0.35);
+}
+
+#messages .column {
+	display: inline-block;
+	width: 45%;
+	padding-left: 1%;
+	padding-right: 1%;
+
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#messages .column.is_read {
+	width: 9%;
+	height: 29px;
+	margin-top: -5px;
+	margin-left: 1%;
+	background: url( '../images/mail_readed.png' ) no-repeat;
+}
+
+#messages .column.is_read_caption {
+	width: 10%;
+	background: none;
+}
+
+#messages .column.is_not_read {
+	width: 9%;
+	height: 23px;
+	margin-top: -5px;
+	margin-left: 1%;
+	background: url( '../images/mail_unread.png' ) no-repeat;
+}
+
+#messages .selected {
+    color: white;
+    background-color: #4794c5;
+}
+

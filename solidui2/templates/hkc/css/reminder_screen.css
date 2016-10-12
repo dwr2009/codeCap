@@ -1,0 +1,123 @@
+#reminderscreen {
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 5%;
+	width: 72%;
+}
+
+#reminderscreen .reminder_table {
+	width: 100%;
+	height: 75%;
+}
+
+#reminderscreen .reminder_table .caption {
+	background: -webkit-linear-gradient(#333333, black);
+	text-align: left;
+	padding-top: 2%;
+	height: 10%;
+	//--border-top-left-radius: 0px;
+	//--border-top-right-radius: 0px;
+	font-size: 24px;
+	color: #808080;
+}
+
+#reminderscreen  .caption_date {
+	width: 32%;
+	padding-left: 10px;
+	float: left;
+}
+
+#reminderscreen  .caption_channel {
+	width: 25%;
+	float: left;
+}
+
+#reminderscreen  .caption_name {
+	width: 30%;
+	float: left;
+	white-space: normal;
+}
+
+#reminderscreen  .caption_duration {
+	width: 13%;
+	float: left;
+	padding-right: 10px;
+}
+#reminderscreen .list_table{
+	background-color: #454545;
+}
+#reminderscreen .selected {
+    background-color: #4794c5;
+    color:white;
+}
+#reminderscreen .pr_button{
+	position:absolute;
+	left:0%;
+	top:78%;
+	width:33%;
+	height:10%;
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	float:left;	
+}
+
+#reminderscreen .reminder_table .pr_button .delete_button{
+	display:inline-block;
+	margin-left:30%;
+	width:10%;
+	height:20%;
+	border-radius: 2%;
+	background-color:#ff0000;
+}
+
+#reminderscreen .reminder_table .pr_button .deleteText{
+	display:inline-block;
+	text-align:left;
+	margin-left: 2%;
+	padding-bottom: 2%;
+	width:20%;
+}
+
+#reminderscreen .page_turning_list_view .count{
+	position:absolute;
+	top:74%;
+	left:50%;
+	width:100%;
+	height:10%;	
+}
+
+#reminderscreen .page_turning_list_view .remind{
+	position:absolute;
+	left:40%;
+	top:78%;
+	height:10%;
+	width:60%;
+	display: inline-block;
+}
+#reminderscreen .page_turning_list_view .remind .big_left{
+	display: inline-block;
+	height:100%;
+	width:50%;
+}
+
+#reminderscreen .page_turning_list_view .remind .remind_left{
+	display: inline-block;
+	background:-webkit-radial-gradient(center,rgb(67, 67, 67),rgb(3, 3, 3));
+	height: 30%;
+	width: 15%;
+}
+
+#reminderscreen .page_turning_list_view .remind .pageNext{
+	display: inline-block;
+	height: 100%;
+	width: 25%;
+	margin-left: 3%;
+}
+
+#reminderscreen .page_turning_list_view .remind .pagePrev{
+	display: inline-block;
+	height: 100%;
+	width: 35%;
+	margin-left: 3%;
+}

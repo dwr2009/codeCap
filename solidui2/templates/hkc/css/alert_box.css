@@ -1,0 +1,15 @@
+.alert_box {
+
+	margin-top: 14%;
+    margin-left: 25%;
+    width: 50%;
+    height: 50%;
+    background: black;
+    opacity: 0.8;
+    border: 2px solid #0b8bca;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px 2px black;
+	-webkit-transition-duration: 0.5s;
+	z-index:200;
+}
+

@@ -1,0 +1,50 @@
+
+.channels {
+	padding: 30px 200px;
+	font-size: 20px;
+}
+
+.channels .caption {
+	padding-top: 15px;
+	text-align: center;
+}
+
+.channels .channel {
+	width: 100%;
+	height: 60px;
+	padding-top: 18px;
+
+	background: -webkit-linear-gradient( rgba(255,255,255,0.25), rgba(255,255,255,0.25) );
+
+	border: 2px solid rgba(255,255,255,0.35);
+	border-top: none;
+}
+.channels .channel:first-child {
+	border-top: 2px solid rgba(255,255,255,0.35);
+}
+.channels .channel.selected {
+	background: #0b8bca;
+}
+
+.channels .column {
+	display: inline-block;
+	padding-left: 10px;
+	padding-right: 10px;
+
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.channels .number,
+.channels .fav,
+.channels .lock {
+	width: 15%;
+}
+.channels .name {
+	width: 55%;
+}
+
+.channels .number {
+	text-align: right;
+}

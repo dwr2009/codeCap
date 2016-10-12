@@ -1,0 +1,128 @@
+#Programme_Reminder {
+	margin-left: 5%;
+	margin-right: 5%;
+	margin-top: 5%;
+	width: 72%;
+}
+
+#Programme_Reminder .reminder_table {
+	width: 100%;
+	height: 80%;
+	//--background-color: dimgrey;
+}
+
+#Programme_Reminder .reminder_table .caption {
+	background: -webkit-linear-gradient(#333333, black);
+	text-align: left;
+	padding-top: 2%;
+	height: 10%;
+	//--border-top-left-radius: 0px;
+	//--border-top-right-radius: 0px;
+	font-size: 24px;
+	color: #808080;
+}
+
+#Programme_Reminder .reminder_table .caption .caption_date {
+	width: 32%;
+	padding-left: 10px;
+	float: left;
+}
+
+#Programme_Reminder .reminder_table .caption .caption_channel {
+	width: 25%;
+	float: left;
+}
+
+#Programme_Reminder .reminder_table .caption .caption_name {
+	width: 30%;
+	float: left;
+}
+
+#Programme_Reminder .reminder_table .caption .caption_duration {
+	width: 13%;
+	float: left;
+	padding-right: 10px;
+}
+
+#Programme_Reminder .reminder_table .table_rows {
+	width: 100%;
+	height: 86%;
+	border-top: 1px solid rgba(255, 255, 255, 1);
+	overflow-y: auto;
+}
+
+#Programme_Reminder .reminder_table .reminder_list {
+	background-color: dimgrey;
+}
+
+#Programme_Reminder .reminder_table .reminder_table_row {
+	width: 100%;
+	height: 45px;
+	border-bottom: 1px solid rgba(255, 255, 255, 1);
+	border-left: 1px solid rgba(255, 255, 255, 1);
+	border-right: 1px solid rgba(255, 255, 255, 1);
+	padding-top: 10px;
+	//--background-color: dimgrey;
+	color: white;
+}
+
+#Programme_Reminder .reminder_table .reminder_table_row .reminder_date {
+	width: 32%;
+	padding-left: 10px;
+	float: left;
+}
+
+#Programme_Reminder .reminder_table .reminder_table_row .reminder_channel {
+	width: 25%;
+	float: left;
+}
+
+#Programme_Reminder .reminder_table .reminder_table_row .reminder_name {
+	width: 30%;
+	float: left;
+}
+
+#Programme_Reminder .reminder_table .reminder_table_row .reminder_duration {
+	width: 13%;
+	float: left;
+	padding-right: 10px;
+}
+
+#Programme_Reminder .selected {
+    width: 100%;
+	color: white;
+    background-color: #4794c5;
+}
+
+#Programme_Reminder .pr_button{
+	//display:inline-block;
+	width:100%;
+	height:10%;
+	background-color:#454545;
+	opacity:0.8;
+}
+
+#Programme_Reminder .pr_button .first_button{
+	//--display:inline;
+	width:35%;
+	height:100%;
+	white-space: pre;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	float:left;
+}
+
+#Programme_Reminder .pr_button .first_button .delete_button{
+	margin-left:15%;
+	width:15%;
+	height:40%;
+	background:-webkit-linear-gradient(top,#ff0000,rgb(90, 25, 25));
+	margin-top:7%;
+}
+
+#Programme_Reminder .pr_button .first_button .deleteText{
+	text-align:center;
+	padding-left:36%;
+	width:10%;
+	margin-top:-7%;
+}

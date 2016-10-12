@@ -1,0 +1,39 @@
+#manualscanc{
+	margin-top:5%;
+	margin-left:5%;
+	margin-right:5%;
+}
+#manualscanc  .panel{
+	margin-top:1%;
+	font-size:20px;
+}
+
+#manualscanc  .lbStrength .panel{
+	margin-top:3%;
+}
+
+#manualscanc  .lbQuality .panel{
+	margin-top:3%;
+}
+
+#manualscanc  .pbSearchingBar .panel{
+	margin-top:3%;
+}
+
+#manualscanc  .barAction .panel{
+	float: right;
+	clear: none;
+	margin-left:2%;
+}
+
+#manualscanc  .btStart .panel{
+	margin-top:2%;
+}
+
+#manualscanc  .btClean .panel{
+	margin-top:2%;
+}
+
+#manualscanc  .btFactoryReset .panel{
+	margin-top:2%;
+}

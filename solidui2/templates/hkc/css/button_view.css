@@ -1,0 +1,33 @@
+.button_view {
+	opacity: 0.6;
+	-webkit-transition-duration: 0.5s;
+}
+.selected .button_view {
+	opacity: 1.0;
+	-webkit-transition-duration: 0.5s;
+}
+
+.button_view .panel {
+	width: 25%;
+	height: 45px;
+	font-size: 18px;
+}
+
+.button_view .panel div {
+	float: left;
+	clear: none;
+}
+
+.button_view .name {
+    width: 100%;
+    text-align: center; 
+    margin: 0 auto;
+	padding-top: 11px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.button_view.active .panel {
+	background: -webkit-linear-gradient(0.5turn, silver, #333333, silver);
+	-webkit-transition-duration: 1.5s;
+}

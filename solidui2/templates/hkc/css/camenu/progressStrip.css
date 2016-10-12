@@ -1,0 +1,22 @@
+.ProgressStrip{
+	visibility:hidden;
+	position:absolute;
+	left:30%;
+	top:510px;
+	width:490px;
+	height:40px;		
+}
+
+.ProgressStrip .strips_bg{
+	position:absolute;
+	height:40px;
+	width:490px;
+}
+
+.ProgressStrip .strips{
+	position:absolute;
+	left:10px;
+	top:8px;
+	height:24px;
+	width:0px;
+}

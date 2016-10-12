@@ -1,0 +1,92 @@
+#autoscanc{
+	width: 70%;
+	height: 100%;
+	position: absolute;
+	left: 18%;
+	top: 3%;
+}
+
+#autoscanc .panel {
+	box-shadow: 0px 0px 10px 5px black;
+	background: -webkit-linear-gradient(0.8turn, black, #333333, black);
+}
+
+#autoscanc .frqInfo {
+	padding-top:2%;
+	padding-left:5%;
+	white-space: pre;
+	width:100%;
+	height:10%;
+	border-bottom:2px solid rgba(255,255,255,0.35);
+	display:block;
+	
+}
+
+#autoscanc .caption {
+	margin-left:3%;
+	margin-right:3%;    
+	padding-top:2%;
+	padding-left:0;
+	font-size:20px;
+	color:#808080;
+	width:95%;
+	height:8%;
+}
+
+#autoscanc .frqList {
+	margin-left:3%;
+	margin-right:3%;
+	    
+	width:92%;
+	height:50%;
+	background-color:#3C6171;	
+	opacity:0.8;
+	//border-width:0px 0px 0px 2px;
+	//border-style:solid;
+	//border-color:rgba(255,255,255,0.35);
+}
+
+#autoscanc .frqList .selected {
+    color: white;
+    background-color: #4794c5;
+}
+
+#autoscanc  .lbStrength .panel{
+    margin-top:3%;
+	height:5%;	
+	width:95%;
+}
+
+#autoscanc  .lbQuality .panel{
+    margin-top:1%;
+	height:5%;
+	width:95%;
+}
+
+#autoscanc  .lbChannelCount .panel{
+    margin-top:1%;
+	height:5%;
+	width:95%;
+}
+
+#autoscanc  .lbStrength .label_view .name{
+	padding-top:0%;
+}
+
+#autoscanc  .lbQuality .label_view .name{
+	padding-top:0%;
+}
+
+#autoscanc  .pbSearchingBar .panel{
+	margin-top:3%;
+	height:2%;
+	width:95%;
+}
+
+#autoscanc  .btContinue .panel{
+	margin-top:3%;
+	height:6%;
+	//margin-left:3%;
+	//margin-right:3%;
+}
+

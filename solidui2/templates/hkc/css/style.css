@@ -1,0 +1,112 @@
+* {
+	margin: 0 ;
+	padding: 0 ;
+	border: 0 ;
+	box-sizing: border-box;
+}
+
+body {
+	color: white;
+	background-color: transparent;
+	margin: 0px 0px 0px 0px;
+}
+
+#interface {
+	width: 1280px;
+	height: 720px;
+	position: absolute;
+	//--outline: 1px solid red;
+	overflow: hidden;
+}
+
+.widget .widget_name,
+.debug_text {
+	display: none;
+	-webkit-transition-duration: 1.5s;
+}
+
+.scene {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+.scene.menu_screen {
+	width: 70%;
+	height: 95%;
+	position: absolute;
+	left: 238px;
+	top: 35px;
+}
+
+.overlay {
+	width: 1280px;
+	height: 720px;
+	position: absolute;
+	left: 0;
+	top: 0;
+
+	//background: rgba(0,0,0,0.65);
+}
+
+
+#info_bar .placeholder {
+	width: 1280px;
+	height: 190px;
+	position: absolute;
+	bottom: 300px;
+	left: 0px;
+
+	background: url('../images/info_bar_static_2.png') no-repeat;
+}
+
+#epg .placeholder {
+	width: 1280px;
+	height: 190px;
+	position: absolute;
+	left: 5px;
+	top: 50px;
+	display: none;
+	background: url('../images/epg_programme_static.png') no-repeat;
+}
+
+
+
+#channel_number {
+	position: absolute;
+	top: 5%;
+	right: 5%;
+	background: rgba(180,180,180,0.75);
+	font-size: 24px;
+	padding: 20px 20px 20px 25px;
+	text-align: center;
+	letter-spacing: 10px;
+
+	border-radius: 15px;
+}
+
+::-webkit-scrollbar {
+	width: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-image: 
+	-webkit-gradient(linear, left bottom, left top, 
+	color-stop(0.75, #F1F1F1), 
+	color-stop(0, #C7C7C7));
+	border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+	background-image: 
+	-webkit-gradient(linear, left bottom, left top, 
+	color-stop(0.75, #000000), 
+	color-stop(0, #363636));
+	border-radius: 3px;
+	//--border: 1px solid #d5d5d5;
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+

@@ -1,0 +1,272 @@
+#info_bar .infobar {
+	left: 0;
+	bottom: 0;
+	position: absolute;	
+	width: 100%;
+	//height: 189px;
+	height: 165px;
+}
+
+#info_bar .placeholder {
+	width: 1280px;
+	height: 190px;
+	position: relative;
+	bottom: 500px;
+	left: 0px;
+	display: none;
+	background: url('../images/info_bar_static_2.png') no-repeat;
+}
+
+#info_bar .channelinfo {
+	width: 100%;
+	height: 35%;
+	position: relative;
+	background: -webkit-linear-gradient(#333333, black);
+	float: left;
+}
+
+#info_bar .channelinfo .currenttitle {
+	float: left;
+	width: 10%;	
+	padding-top: 1.3%;
+	padding-left: 1.6%;
+	font-size: 24px;
+	white-space: pre;	
+}
+
+#info_bar .channelinfo .channeltypetv {
+	float: left;
+	width: 70px;
+	height: 55px;	
+	margin-top: 5px;
+	margin-left: 20px;
+	font-size: 20px;
+	display: inline-block;
+	background: url('../images/channel_type_tv.png') no-repeat;	
+}
+
+#info_bar .channelinfo .channeltyperadio {
+	float: left;
+	width: 70px;
+	height: 55px;	
+	margin-top: 8px;
+	margin-left: 20px;
+	font-size: 20px;
+	display: inline-block;
+	background: url('../images/channel_type_radio.png') no-repeat;
+}
+
+#info_bar .channelinfo .channelid {
+	float: left;
+	width: 7%;	
+	padding-top: 1.6%;
+	padding-left: 2%;
+	text-align: right;
+	font-size: 20px;
+	font-weight: bold;
+	color: #959595;
+}
+
+#info_bar .channelinfo .channelname{
+	float: left;
+	width: 23%;
+	padding-top: 1.6%;
+	margin-left: 1.5%;
+	text-align: left;
+	font-size: 20px;
+	font-weight: bold;
+	color: #959595;
+}
+
+#info_bar .channelinfo .currentinfo{
+	float: left;
+	width: 50%;
+	height: 100%;
+	padding-top: 1%;
+	padding-left: 2%;
+	padding-right: 5%;
+	font-size: 20px;
+}
+
+#info_bar .channelinfo .currentinfo .currentinfotext {
+	height: 100%;
+	text-align: right;
+	vertical-align: middle;
+	display: table-cell;
+	font-size: 20px;
+	line-height: 120%;
+}
+
+
+
+/*#info_bar .channelinfo .nextinfo .arrow {
+	width: 50px;
+	height: 30px;	
+	margin-top: 18px;
+	background: url( '../images/menu_arrow.png' ) no-repeat center center;
+	float: left;
+}*/
+
+#info_bar .programguide {
+	clear: left;	
+	width: 100%;
+	height: 65%;
+	position: relative;
+	background: #747474;
+	float: left;
+	
+}
+
+#info_bar .programguide .currentprogram {
+	width: 55%;
+	height: 100%;
+	background: -webkit-linear-gradient(left, #333333 0%, #747474 100%);
+	float: left;
+	opacity: 0.8;
+}
+
+#info_bar .programguide .currentprogram .currentprogramtime {
+	display:inline-block;
+	float:left;
+	margin-top: 2%;
+	margin-left: 2%;
+	font-size: 22px;
+	width: auto;
+	height: 22%;
+	overflow: hidden;
+	white-space: pre;
+}
+
+#info_bar .programguide .currentprogram #currentprogramname {
+	display:inline-block;
+	float:left;
+	margin-top: 2%;
+	margin-left: 2%;
+	font-size: 22px;
+	width: 50%;
+	height: 22%;
+	overflow: hidden;
+	white-space: pre;
+}
+
+
+#info_bar .programguide .currentprogram #progressbar {
+	clear: left;  
+ 	margin-top: 2%;
+ 	margin-left: 3%;
+ 	float:left;
+ 	width: 100%;
+ 	height: 10%;
+} 
+
+#info_bar .programguide .currentprogram #progressbar .bar { 
+	width: 60%;
+}
+
+#info_bar .programguide .currentprogram #progressbar .bar .barborder { 
+	width: 100.8%;
+}
+
+#info_bar .programguide .programinfo{
+	height: 100%;
+	width: 45%;
+	float: left;
+	border-left: 1px solid #4d4d4d;
+	opacity: 0.8;
+}
+
+/*#info_bar .programguide .programinfo .nextinfo {
+	width: 100%;
+	height: 35%;
+	border-bottom: 1px solid #4d4d4d;
+}
+
+#info_bar .programguide .programinfo .nextinfo .nexttitle {
+	padding-top: 1.5%;
+	padding-left: 60%;
+	font-size: 23px;
+}*/
+
+#info_bar .programguide .programinfo .currentprograminfo {
+	clear: left;	
+	width: 40%;
+	height: 100%;
+	background: #747474;
+	float: left;
+	//--border-right: 1px solid #4d4d4d;
+	font-size: 20px;
+}
+
+/*#info_bar .programguide .programinfo .currentprograminfo .size {
+	padding-top: 9%;
+	padding-left: 10%;
+	float: left;
+}
+
+#info_bar .programguide .programinfo .currentprograminfo .quality {
+	margin-top: 9%;
+	background: url( '../images/infobar_quality.png' ) no-repeat;
+	height: 28px;
+	width: 35px;
+	margin-left: 16%;
+	float: left;
+}*/
+
+#info_bar .programguide .programinfo .currentprograminfo .audio {
+	float: left;
+	width:50%;
+	height:100%;
+	border-right: 1px solid #4d4d4d;
+	text-align:center;
+	padding-top: 10%;
+	font-size:20px;
+}
+
+#info_bar .programguide .programinfo .currentprograminfo .audio .audio_name{
+	height:50%;
+	width:100%;
+	text-align:center;
+}
+
+#info_bar .programguide .programinfo .currentprograminfo .audio .voice_logo{
+	height:50%;
+	width:40%;
+	background: url('../images/voice.png') no-repeat;
+	margin-left: 35%;
+}
+
+#info_bar .programguide .programinfo .currentprograminfo .nexttitle {
+	float: left;
+	width:40%;
+	height:100%;
+	padding-top: 10%;
+	padding-left: 10%;
+	font-size:24px;
+}
+
+#info_bar .programguide .programinfo .nextprogram {
+	width: 50%;
+	height: 65%;
+	//--background: #333333;
+	float: left;
+	//--border-top: 1px solid #878787;
+	font-size: 22px;
+	//--color: #afafaf;
+	opacity: 0.8;
+	padding-top: 2%;
+}
+
+#info_bar .programguide .programinfo .nextprogram .nextprogramtime {
+	padding-top: 3%;
+	white-space: pre;
+	overflow: hidden;
+}
+
+#info_bar .programguide .programinfo .nextprogram #nextprogramname {
+	padding-top: 2%;
+	height: 50%;
+	width: 98%;
+	white-space: pre;
+	overflow: hidden;
+}
+

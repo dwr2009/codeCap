@@ -1,0 +1,27 @@
+.process_bar {
+	opacity: 0.5;
+}
+
+.process_bar .panel {
+	width: 100%;
+	height: 15px;
+	font-size: 18px;
+}
+
+.process_bar .panel div {
+	float: left;
+	clear: none;
+}
+
+.process_bar .process {
+	width: 0%;
+	height: 100%;
+    background-color: #0b8bca;
+    background-image: -webkit-gradient(linear, 0 0, 100% 100%,
+                            color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent),
+                            color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+                            color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent),
+                            to(transparent));	
+   -webkit-background-size: 50px 50px;
+   -webkit-transition-duration: 0.5s;
+}

@@ -1,0 +1,88 @@
+#parentlock {
+	width:40%;
+	height:70%;
+	margin-left:30%;
+	margin-top:10%;
+}
+
+#parentlock .caption {
+	text-align:center;
+	padding-top:3%;
+	font-size:28px;
+}
+
+#parentlock .channelslist {
+	width:97%;
+	height:80%;
+	border-width:0px 0px 0px 2px;
+	border-style:solid;
+	border-color:rgba(255,255,255,0.35);
+	background-color: #3C6171;
+	opacity: 0.8;
+}
+
+#parentlock .channels_listlable{
+	padding-top:2%;
+	padding-left:5%;
+	white-space: pre;
+	width:100%;
+	height:10%;
+	border-bottom:2px solid rgba(255,255,255,0.35);
+	display:block;
+}
+
+#parentlock .channelslist .selected {
+	background-color: #0086C9;
+	color:white;
+	opacity:1;
+}
+
+#parentlock .panel {
+	width:100%;
+	height:100%;
+	border: 0px;
+	border-radius: 0px;
+	box-shadow: 0px 0px 0px 0px;
+	background: -webkit-linear-gradient(top, #333333, black);
+}
+
+#parentlock .channels_listlable .lockflag {
+	display:inline-block;
+	width:2%;
+	margin-left:15%;	
+}
+
+#parentlock .lockarea{
+	width:100%;
+	height:10%;
+	background-color:#454545;
+}
+
+#parentlock .lockarea .lock_reminder{
+	display:inline-block;
+	text-align:center;
+	width:7%;
+	height:60%;	
+	margin-left:45%;
+	margin-top:2%;
+	padding-top:5px;
+	background:-webkit-radial-gradient(center,rgb(67, 67, 67),rgb(3, 3, 3));
+	border-radius:100%;	
+	opacity:0.8;
+}
+#parentlock .lockarea .lock_name{
+	padding-top:3%;
+	padding-left:3%;
+	display:inline-block;
+}
+
+
+
+
+
+
+
+
+
+
+

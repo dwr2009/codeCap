@@ -1,0 +1,35 @@
+.label_view {
+	opacity: 0.6;
+	-webkit-transition-duration: 0.5s;
+}
+.selected .label_view {
+	opacity: 1.0;
+	-webkit-transition-duration: 0.5s;
+}
+
+.label_view .panel {
+	width: 100%;
+	height: 45px;
+	font-size: 18px;
+}
+
+.label_view .panel div {
+	float: left;
+	clear: none;
+}
+
+.label_view .name,.value {
+	padding-top: 11px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.label_view .name {
+	width: 35%;
+	padding-left: 5%;
+}
+
+.label_view .value {
+	width: 35%;
+	text-align: center;
+}

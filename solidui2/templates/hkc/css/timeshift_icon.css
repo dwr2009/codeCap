@@ -1,0 +1,8 @@
+#timeshift_icon .timeshift_icon {
+	background: url('../images/Timeshift_icon.png') no-repeat;
+	position: absolute;
+	right: 20px;
+	top: 60px;
+	width: 60px;
+	height: 60px;
+}

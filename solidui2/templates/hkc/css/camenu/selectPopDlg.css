@@ -1,0 +1,54 @@
+#selectPopDlg{
+	position:absolute;
+	top:28%;
+	left:34%;
+	width:33%;
+	height:33%;
+	z-index:105;
+	background: url( '../../images/promt_box.png' ) no-repeat;
+}
+
+#selectPopDlg .selected{
+	background:#4794c5;
+}
+
+#selectPopDlg .message{
+		text-align:center;
+		font-size:20px;
+		width:100%;
+		height:60%;
+		padding-top: 25%;
+		padding-left:30px;
+		padding-right:30px;		
+}
+
+#selectPopDlg .selectPopDlg_lable{
+	
+	display:inline-block;
+	height:20%;
+	width:100%;
+	margin-top:5%;
+}
+
+#selectPopDlg .selectPopDlg_lable .confirm_button{
+	display:inline-block;
+	height:60%;
+	width:20%;
+	text-align:center;
+	border-radius: 5px;
+	border: 2px solid gray;
+	margin-left: 20%;
+	margin-top: 2%;
+	padding-top:1%;
+}
+
+#selectPopDlg .selectPopDlg_lable .cancel_button{
+	display:inline-block;
+	height:60%;
+	width:20%;
+	text-align:center;
+	border-radius: 5px;
+	border: 2px solid gray;
+	margin-left: 20%;
+	padding-top:1%;
+}

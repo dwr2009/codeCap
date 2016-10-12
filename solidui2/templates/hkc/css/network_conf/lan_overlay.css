@@ -1,0 +1,15 @@
+#ip_config .ip_config {
+	margin-left: 7%;
+	margin-right: 7%;
+	margin-top: 5%;
+}
+
+#ip_config .ip_config .panel {
+	margin-bottom: 10px;
+	font-size: 20px;
+}
+
+#ip_config .ip_config .selected.input_view {
+	opacity: 1.0;
+	-webkit-transition-duration: 0.5s;
+}

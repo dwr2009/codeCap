@@ -1,0 +1,105 @@
+
+#general_settings {
+	margin-top:0.5%;
+	margin-left:5%;
+	margin-right:5%;
+}
+
+#general_settings .list_view_delegate {
+	margin-top: 5px;
+}
+
+#general_settings .setting_lable{
+	height:45px;
+	margin-top:5px;
+	opacity: 0.6;
+	}
+	
+#general_settings .setting_lable.selected {
+	opacity: 1.0;
+}
+
+#general_settings .setting_lable .panel{
+	padding-top:11px;
+	padding-left:5%;
+	height:45px;
+	font-size:20px;
+	}
+#general_settings .select_view {
+	opacity: 0.6;
+	/*-webkit-transition-duration: 0.5s;*/
+}
+#general_settings .selected .select_view {
+	opacity: 1.0;
+	/*-webkit-transition-duration: 0.5s;*/
+}
+
+#general_settings .select_view .panel {
+	height: 45px;
+	font-size: 20px;
+}
+
+#general_settings .select_view .panel div {
+	float: left;
+	clear: none;
+}
+
+#general_settings .select_view .name, .select_view .items {
+	padding-top: 11px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#general_settings .select_view .name {
+	width: 25%;
+	padding-left: 5%;
+}
+
+#general_settings .select_view .items {
+	width: 35%;
+	text-align: center;
+}
+
+#general_settings .select_view .arrow {
+	width: 10%;
+	height: 100%;
+}
+#general_settings .select_view .arrow.left {
+	background: url( '../images/menu_arrow_back.png' ) no-repeat center center;
+}
+#general_settings .select_view .arrow.right {
+	background: url( '../images/menu_arrow.png' ) no-repeat center center;
+}
+
+#general_settings .select_view.active .arrow.left {
+	background: url( '../images/menu_arrow_selected_back.png' ) no-repeat center center;
+	-webkit-transition-duration: 0.5s;
+}
+#general_settings .select_view.active .arrow.right {
+	background: url( '../images/menu_arrow_selected.png' ) no-repeat center center;
+	-webkit-transition-duration: 0.5s;
+}
+
+#general_settings .select_view.active .items {
+	color: #0b8bca;
+	-webkit-transition-duration: 0.5s;
+}
+
+.alert_box {
+	
+	top: 25%;
+	left: 25%;
+	width: 50%;
+	height: 50%;
+	border: 16px solid orange;
+	background-color: black;
+	opacity: 0.8;
+	overflow: auto;
+}
+
+#general_settings .connectionStatus{
+	font-size:24px;
+	float: left;
+	padding-left: 5%;
+	padding-top:11px;
+}

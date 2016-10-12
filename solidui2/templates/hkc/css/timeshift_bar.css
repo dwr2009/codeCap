@@ -1,0 +1,175 @@
+#timeshift_bar {
+	position: absolute;
+	left: 0;
+	bottom:0;
+	//--background: url('../images/timeshift.jpg') no-repeat;
+	z-index: 90;
+	width: 100%;
+	height: 100%;
+}
+
+#timeshift_bar .timeshift_icon {
+	background: url('../images/Timeshift_icon.png') no-repeat;
+	position: absolute;
+	right: 20px;
+	top: 60px;
+	width: 60px;
+	height: 60px;
+}
+
+#timeshift_bar .timeline {
+	position: absolute;
+	bottom: 90px;
+	left: 7.5%;
+	width: 85%;
+	height: 80px;
+	background: -webkit-linear-gradient(top, rgba(65,65,65,1) 0%, rgba(25,25,25,1) 100%); 
+}
+
+#timeshift_bar .timeline .time_duration {
+	position: absolute;
+	bottom: 10px;
+	right: 4%;
+	width: auto;
+	height: auto;
+	color: white;
+	font-size: 16px;
+}
+
+#timeshift_bar .timeline #progressbar {
+	width: 94%;
+	margin-left: 3%;
+	margin-top: 30px;
+}
+
+#timeshift_bar .timeline #progressbar .bar {
+	width: 75%;
+}
+
+#timeshift_bar .timeline #progressbar .barborder {
+	width: 100.4%;
+}
+
+#timeshift_bar .timeline #progressbar .starttime, .endtime {
+	display: block;
+}
+
+#timeshift_bar .timeline #progressbar .bar .progress .current .currentbox {
+	height: 24px;
+}
+
+#timeshift_bar .timeline #progressbar .bar .progress .current .currentbox .currenttime {
+	padding-top: 2px;
+}
+
+#timeshift_bar .button_box {
+	position: absolute;
+	bottom: 25px;
+	left: 7.5%;
+	width: 85%;
+	height: 65px;
+	background-color: rgba(80,80,80,0.9); 
+}
+
+#timeshift_bar .button_box .timeline_text {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: auto;
+	margin-top: 10px;
+	margin-left: 3%;
+	margin-right: 14%;
+	font-size: 20px;
+}
+
+
+/*#timeshift_bar .button_box .button_1 { 
+	position: relative; 
+	float: left; 
+	margin-top: 7px;
+	margin-left: 40%; 
+	border-radius: 4px; 
+	background: -webkit-linear-gradient(top, rgba(65,65,65,1) 0%, rgba(41,37,38,1) 100%); 
+	border: #676767 solid 1px; 
+	height: 27px; 
+	width: 55px; 
+} 
+
+#timeshift_bar .button_box .button { 
+	position: relative; 
+	float: left; 
+	margin-top: 7px;
+	margin-left: 2%; 
+	border-radius: 4px; 
+	background: -webkit-linear-gradient(top, rgba(65,65,65,1) 0%, rgba(41,37,38,1) 100%); 
+	border: #676767 solid 1px; 
+	height: 27px; 
+	width: 55px; 
+} 
+
+#timeshift_bar .button_box .button_1 .stop_btn {
+	width: 10px; 
+	height: 10px; 
+	background-color: white; 
+	margin-left: 21px; 
+	margin-top: 8px;	
+}
+
+#timeshift_bar .button_box .button .skip_left_btn {
+	width: 0; 
+   height: 0; 
+   border-right: 8px solid white; 
+   border-top: 5px solid transparent; 
+   border-bottom: 5px solid transparent; 
+   margin-left: 16px;	
+   margin-top: 8px;
+   float: left;
+}
+#timeshift_bar .button_box .button .skip_left_btn_2 {
+	float: left;
+	width: 0; 
+   height: 0; 
+   border-right: 8px solid white; 
+   border-top: 5px solid transparent; 
+   border-bottom: 5px solid transparent; 	
+   margin-top: 8px;
+}
+
+#timeshift_bar .button_box .button .play_btn {
+	width: 0; 
+   height: 0; 
+   border-left: 10px solid white; 
+   border-top: 5px solid transparent; 
+   border-bottom: 5px solid transparent; 
+   margin-left: 21px;	
+   margin-top: 8px;
+}
+
+#timeshift_bar .button_box .button .pause_btn {
+	width: 7px; 
+   height: 10px; 
+   border-left: 2px solid white;
+   border-right: 2px solid white; 
+   margin-left: 22px;	
+   margin-top: 8px;
+}
+
+#timeshift_bar .button_box .button .skip_right_btn {
+	width: 0; 
+   height: 0; 
+   border-left: 8px solid white; 
+   border-top: 5px solid transparent; 
+   border-bottom: 5px solid transparent; 
+   margin-left: 16px;	
+   margin-top: 8px;
+   float: left;
+}
+#timeshift_bar .button_box .button .skip_right_btn_2 {
+	float: left;
+	width: 0; 
+   height: 0; 
+   border-left: 8px solid white; 
+   border-top: 5px solid transparent; 
+   border-bottom: 5px solid transparent; 	
+   margin-top: 8px;
+}*/

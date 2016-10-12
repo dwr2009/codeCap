@@ -1,0 +1,133 @@
+#progressbar{
+	position: relative;	
+	width: 100%;
+}
+
+#progressbar .starttime {
+	position: relative;
+  float:left;
+  font-size: 16px;
+  font-weight: bolder;
+  letter-spacing: 1.1px;
+} 
+
+#progressbar .bar {
+  position: relative;
+  margin-left: 5px;
+  float: left;
+  width: 250px;
+  height: 10px;
+
+  border-radius: 35px;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #b6bcc6), color-stop(1, #9da5b0));
+}   
+
+#progressbar .bar .barborder {
+	position: absolute;
+	margin-top: -2px;
+	margin-left: -2px;
+
+  float: left;
+  width: 252px;
+  height: 14px;
+  border: 2px solid #848484;
+  border-radius: 35px;
+  z-index: 40;
+} 
+
+#progressbar .bar .progress {
+	position: relative;
+	height: 100%;
+	width: 50%;
+	
+}  
+
+#progressbar .bar .progress .progressborder {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #4d4c51;
+	border-radius: 35px;
+	z-index: 50;
+  
+}   
+
+#progressbar .bar .progress .progressstream {
+  position: absolute;
+  overflow: hidden;
+  height: 95%;
+  width: 100%;
+  
+  border-radius: 35px;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #116be5), color-stop(1, #24a7d3));
+  
+}
+
+#progressbar .bar .progress .progressdot {
+	float: right;
+	position: relative;
+	top: -2px;
+	height: 130%;
+	width: 14px;
+	border-width: 0.19em;
+	border-style: solid;
+	border-color: #f9f9f9;
+	border-radius: 10px;
+	//--background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #116be5), color-stop(1, #24a7d3));
+	
+	z-index: 99;
+}
+
+#progressbar .bar .progress .current {
+	float: right;
+	position: relative;
+	margin-right: 1px;
+	margin-top: 10px;
+	width: 0;
+	height: 0;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-bottom: 6px solid #f9f9f9;
+} 
+
+#progressbar .bar .progress .current .currentbox {
+	float: right;
+	position: relative;
+	//top: 6px;
+	//right: -26px;
+	width:72px;
+	height: 24px;
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #a3a3a3), color-stop(1, #f9f9f9));
+	border-radius: 2px;
+} 
+
+#progressbar .bar .progress .current .currentbox .currenttime {
+	//padding-left: 2px;
+	//padding-right: 2px;	
+	color: #000000;
+	text-align: center;
+	padding-top:6px;
+	font-size: 10px;
+	font-weight: bold;
+	letter-spacing: 1.3px;
+} 
+
+:lang(en) #progressbar .bar .progress .current .currentbox .currenttime {
+	padding-left: 2px;
+	padding-right: 2px;	
+	padding-top:4px;
+	color: #000000;
+	text-align: center;
+	font-size: 15px;
+	font-weight: bold;
+	letter-spacing: 1.3px;
+} 
+
+#progressbar .endtime {
+  position: relative;
+  margin-left: 5px;
+  float:left;
+  font-size: 16px;
+  font-weight: bolder;
+  letter-spacing: 1.1px;
+} 

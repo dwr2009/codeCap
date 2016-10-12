@@ -1,0 +1,12 @@
+1.a,b互换算法(二进制)
+ a = a ^ b
+ d = a ^ b
+ a = a ^ b
+
+2.
+mount -o rw,remount /  //给只读文件系统加上可写权限，限root用户
+//将远端文件通过nfs服务挂载到本地
+mount -t nfs  192.168.50.101:/home/thtfit/nfs_root /mnt 
+
+
+

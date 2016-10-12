@@ -1,0 +1,17 @@
+.popDlg{
+	text-align:center; 
+	position:absolute;
+	left:34%;
+	top:28%;
+	width:33%;
+	height:33%;
+	background: url( '../../images/promt_box.png' ) no-repeat;
+	z-index:100;
+}
+ 
+.popDlg .popmsg{
+	padding-top:100px;
+	padding-left:30px;
+	padding-right:30px;
+	color:white;
+}

@@ -1,0 +1,17 @@
+@font-face {
+font-family: 'myHKZY';
+src: url('fonts/HKZY.TTF')  format('truetype');
+}
+
+@font-face {
+font-family: 'myHelvetica';
+src: url('fonts/HelveticaNeueLTStd-Cn.otf')  format('opentype');
+}
+
+:lang(ch) 	{
+    font-family: myHKZY;
+}
+
+html 	{
+    font-family: myHelvetica;
+}

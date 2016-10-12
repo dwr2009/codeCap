@@ -1,0 +1,30 @@
+#scrollbar{
+	position: relative;	
+	height: 100%;
+	border-radius: 3px;
+	border: 1px solid #d5d5d5;
+}
+
+#scrollbar .scrollbartrack {
+	position: absolute;	
+	height: 100%;
+	background: 
+	-webkit-gradient(linear, left bottom, left top, 
+	color-stop(0.75, #000000), 
+	color-stop(0, #363636));
+	border-radius: 3px;
+	z-index: 40;
+}
+
+#scrollbar .scrollbarthumb {
+  position: relative;
+  background-image: 
+	-webkit-gradient(linear, left bottom, left top, 
+	color-stop(0.75, #F1F1F1), 
+	color-stop(0, #C7C7C7));
+	border-radius: 2px;
+	height: 80%;
+	width: 100%;
+	top: 0%;
+	z-index: 50;
+} 
