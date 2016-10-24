@@ -13,4 +13,4 @@ if [ "$internal" -lt "0" ];then
 	birth=`date --date=$(($y+1))$m$d +%s`
 	internal=$(($birth-$date_now))
 fi
-echo "There is :$((internal/60/24)) days ."
+echo "There is :$((internal/60/60/24)) days ."
