@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>image/left.ico</file>
+  </qresource>
+  <qresource prefix="newPrefix">
+    <file>image/up.ico</file>
+  </qresource>
+  <qresource prefix="newPrefix">
+    <file>image/down.ico</file>
+  </qresource>
+  <qresource prefix="newPrefix">
+    <file>image/right.ico</file>
+  </qresource>
+  <qresource prefix="newPrefix">
+    <file>image/Esc_Pic.png</file>
+  </qresource>
+</RCC>

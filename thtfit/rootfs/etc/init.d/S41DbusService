@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Sanity checks.
+[ -x /bin/dbus-daemon ] || exit 0
+
+start() {
+        pid=`ps -fA | grep "dbus-daemon"| grep "system" | awk '{print $2}'`
+	exitCode=$?
+	if [ ${exitCode} -eq 0 ]; then
+		if [ ! -z "${pid}" ]; then
+			echo "Dbus Service already exists!"
+			exit 1
+		fi
+	fi
+	
+	echo "Starting DbusService..."
+	if [ -f /var/run/messagebus.pid ]; then
+		rm -f /var/run/messagebus.pid
+	fi
+
+	if [ ! -d "/var/run/dbus" ]; then
+		mkdir -p /var/run/dbus
+	fi
+	dbus-daemon --system
+}	
+
+stop() {
+	echo -n "Stopping DbusService..."
+	killall dbus-daemon
+	ProcessExitCode=$?
+	if [ ${ProcessExitCode} -eq 0 ]; then
+		rm -f /var/run/messagebus.pid
+	fi
+}
+
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+    stop
+    start
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac

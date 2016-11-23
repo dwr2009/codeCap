@@ -1,0 +1,7 @@
+/etc/TZ
+/etc/localtime
+/etc/snmp/snmpd.conf
+/data/SysProp.bin
+/data/Xapp
+/etc/pointercal
+/data/Program.data

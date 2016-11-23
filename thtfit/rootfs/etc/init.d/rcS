@@ -1,0 +1,152 @@
+#! /bin/sh
+
+#ret val: 1 - mounted, 0 - not mounted
+function ChkPathIsMounted()
+{
+       local FunctionRetCode=0
+       local PathToChk=$1
+       if [ -z "${PathToChk}" ]; then
+               return ${FunctionRetCode}
+       fi
+       local ScanRes=`mount | grep "${PathToChk}" | awk -F ' ' '{ print $2$3; }'`
+       local ProcessExitCode=$?
+       if [ ${ProcessExitCode} -ne 0 ]; then
+               return ${FunctionRetCode}
+       fi
+       #echo "ScanRes=${ScanRes}"
+       for OneLineScanRes in ${ScanRes}; do
+               if [ "on${PathToChk}" = "${OneLineScanRes}" ]; then
+                       FunctionRetCode=1
+               fi
+       done
+       return ${FunctionRetCode}
+}
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin:.
+
+echo "Mounting virtual filesystems"
+
+mkdir -p /proc /sys /dev /tmp /mnt
+
+mount -t proc proc /proc
+
+mount -t sysfs sys /sys
+mkdir -p /sys/kernel/debug
+mount -t debugfs debugfs /sys/kernel/debug
+
+mount -t devtmpfs none /dev
+mkdir -p /dev/pts /dev/tts
+mount -t devpts devpts /dev/pts
+
+#mount -t tmpfs -o mode=01777 tmpfs /tmp
+
+ChkPathIsMounted /tmp
+tmpIsMounted=$?
+if [ ${tmpIsMounted} -eq 0 ]; then
+       mount -t tmpfs -o mode=01777 tmpfs /tmp
+fi
+
+if [ ! -c /dev/console ]; then
+	rm -fr /dev/console
+	mknod -m 660 /dev/console c 5 1
+fi
+
+if [ ! -c /dev/null ]; then
+	rm -fr /dev/null
+	mknod -m 660 /dev/null c 1 3
+fi
+
+ln -snf ../ttyS0 /dev/tts/0
+ln -snf ../ttyS1 /dev/tts/1
+ln -snf ../ttyS2 /dev/tts/2
+ln -snf ../ttyS3 /dev/tts/3
+
+echo "/sbin/stbhotplug" > /proc/sys/kernel/hotplug
+
+if [ ! -z "$BASH_VERSION" ]; then
+	# Recovery from missing /dev/console (works on bash but not ash)
+	exec < /dev/console >& /dev/console
+fi
+
+# Don't let SCHED_FIFO / SCHED_RR realtime threads get preempted
+echo -1 > /proc/sys/kernel/sched_rt_runtime_us
+
+# GPLv3 warning
+if [ -e /bin/gdbserver -o -e /bin/gdb ]; then
+	echo "* WARNING: THIS STB CONTAINS GPLv3 SOFTWARE"
+	echo "* GPLv3 programs must be removed in order to enable security."
+	echo "* See: http://www.gnu.org/licenses/gpl-faq.html#Tivoization"
+fi
+
+# -small configuration: do not start any other services automatically
+if [ ! -e /bin/login ]; then
+	[ -f /root/rc.user ] && sh /root/rc.user
+	exit 0
+fi
+
+# Set up MoCA link, if present
+[ -e /dev/bmoca0 ] && mocacfg boot
+
+cmdline=`cat /proc/cmdline`
+
+if [[ "$cmdline" != *nfsroot=* ]]; then
+	# set up networking if we are not on an NFS rootfs
+	for x in `ls /sys/class/net`; do
+		echo "Configuring $x interface"
+		/sbin/ifup $x
+	done
+else
+	# just configure loopback
+	/sbin/ifup lo
+fi
+
+# Set up WLAN, if present
+if [ -e /etc/wl/rtecdc.trx -a -x /bin/bcmdl ]; then
+	bcmdl /etc/wl/rtecdc.trx
+fi
+[ -e /lib/modules/wl.ko ] && insmod /lib/modules/wl.ko
+
+# rootfs on SATA hard disk (but not sda4-less thumbdrive)
+if [ -e /dev/root -a "`readlink /dev/root`" = "sda1" -a -e /dev/sda4 ]; then
+	mount -o remount,noatime,commit=1 /
+	mount -a
+	swapon -a
+fi
+
+echo "Starting network services"
+portmap &
+telnetd
+
+if [ -e /sbin/dropbear ]; then
+	if [ ! -e /etc/dropbear/dropbear_rsa_host_key ]; then
+		mkdir -p /etc/dropbear
+		dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
+		dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key
+	fi
+	dropbear
+fi
+
+for i in /etc/init.d/S??* ;do
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+done
+
+if [ -f /root/rc.user ]; then
+	echo "Starting user services"
+	/bin/sh /root/rc.user
+fi

@@ -1,0 +1,2423 @@
+CE-SNMP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE, MODULE-IDENTITY, NOTIFICATION-TYPE,
+    IpAddress, Integer32, enterprises, Counter64
+        FROM SNMPv2-SMI;
+
+ce MODULE-IDENTITY
+    LAST-UPDATED "201001050000Z"
+    ORGANIZATION "CELabs Systems, Inc."
+    CONTACT-INFO    
+	"    CELabs Systems, Inc.
+        "
+    DESCRIPTION
+	   "Added forceTxMode in the tuner group."
+    REVISION	  "201001050000Z"
+    DESCRIPTION
+	   "Added tuner group and various other MIB objects, along with updates to 
+	    descriptions of various objects."
+    REVISION	  "200912170000Z"
+    DESCRIPTION
+	   "Added GPIO, SNMP Trap, virtual channel and wireless networking MIB objects."
+    REVISION	  "200906090000Z"
+    DESCRIPTION
+	   "Added videoPID, audioPID, playerBrightness, playerContrast, playerColor,
+	    playerTint, horizontalSize, horizontalShift, verticalSize, verticalShift,
+	    userOSDAddress, deviceKey, enabledFeatures, maintainLog and irControl 
+	    objects.  Updated descriptions for various MIB objects.  Changed
+	    object identifier name from to 'tsiHD'"
+    REVISION	  "200811120000Z"
+    DESCRIPTION
+	   "Updates to several MIB objects.  Added Layering support serialParameters,
+	    videoSysType, coordinateMode, xPosition, yPosition, xSize, ySize, videoMode
+	    activeLayer, alphaLayer, playBrowser, playLayer, storeBrowserFile, and
+	    ftpPut.  transferStatus has been renamed to transferControl."
+    REVISION      "200802180000Z"
+    DESCRIPTION
+           "Updates to various MIB objects.  Added playerVolume, playerMute,
+     	    timeZone, priTimeServer, secTimeServer, speedControl,
+            enableIdleDefaultPlaylist, idleDetectTime, pushConfig, pullConfig,
+            restorePreviousConfig objects."
+    REVISION      "200708300000Z"
+    DESCRIPTION
+	   "CELabs Enterprise MIB."
+    REVISION      "200705290000Z"
+    DESCRIPTION
+    	   "Updates to various MIB object descriptions."
+    REVISION      "200703120000Z"
+    DESCRIPTION
+           "Updates to various MIB objects.  Added videoType, audioType,
+	   audioFreq MIB objects."
+    ::= { enterprises 38010 }
+
+tsiHD OBJECT IDENTIFIER ::= { ce 3 }
+network OBJECT IDENTIFIER ::= { tsiHD 1 }
+monitor OBJECT IDENTIFIER ::= { tsiHD 2 }
+player  OBJECT IDENTIFIER ::= { tsiHD 3 }
+media   OBJECT IDENTIFIER ::= { tsiHD 4 }
+system  OBJECT IDENTIFIER ::= { tsiHD 5 }
+tnetTraps OBJECT IDENTIFIER ::= { tsiHD 6 }
+gpio OBJECT IDENTIFIER ::= { tsiHD 7 }
+tuner   OBJECT IDENTIFIER ::= { tsiHD 8 }
+
+tnetIPAddress OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD IP Address. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 1 }
+
+tnetSubnetAddress OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Subnet Mask Address. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 2 }
+ 
+tnetGatewayAddress OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Gateway Address. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 3 }
+ 
+tnetPriDNS OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Primary Domain Name Server. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 4 }
+
+tnetSecDNS OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Secondary Domain Name Server.  The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 5 }
+
+tnetDHCPEnable OBJECT-TYPE
+    SYNTAX	INTEGER  { static(0), dhcp(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"DHCP enable object.  The netCommit object must be set after setting
+	this object in order for the set to take effect."
+    ::= { network 6 }
+
+netCommit OBJECT-TYPE
+    SYNTAX	INTEGER  { immediatelySaveWired(0),
+                           nextBootWired(1),
+			   immediatelyNoSaveWired(2), 
+			   immediatelySaveWireless(3),
+                           nextBootWireless(4),
+			   immediatelyNoSaveWireless(5)
+			   }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"This object are used to indicate when the new network settings take
+	effect.  
+	
+	immediatelySaveWired (0) will save the new wired network settings into
+	memory and change the wired network settings immediately.  
+	
+	nextBootWired (1) will save the new wired network settings into memory, but will 
+	not change network settings until the next time the TNET-HD is started. 
+	
+	immediatelyNoSaveWired (2) will change the wired network to the new settings 
+	immediately, but will NOT save the new settings.  This is mostly used to
+	temporarily change the wired network settings for testing.  The next time
+	the TNET-HD is started, it will revert to using the prior network
+	settings.
+	
+	immediatelySaveWireless (3) will save the new wireless network settings into
+	memory and change the wired network settings immediately.  
+	
+	nextBootWireless (4) will save the new wireless network settings into memory, but will 
+	not change network settings until the next time the TNET-HD is started. 
+	
+	immediatelyNoSaveWired (5) will change the wireless network to the new settings 
+	immediately, but will NOT save the new settings.  This is mostly used to
+	temporarily change the wireless network settings for testing.  The next time
+	the TNET-HD is started, it will revert to using the prior network
+	settings.
+
+	When read, this object already returns 0."
+    ::= { network 7 }
+
+macAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (6))
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+    	"Returns the MAC address of the TNET-HD."
+    ::= { network 8 }
+
+smbUser OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The SMB username used to mount the SMB remote file system."
+    ::= { network 9 }
+
+smbPassword OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The SMB password used to mount the SMB remote file system."
+    ::= { network 10 }
+  
+smbMountShareName OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..64))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This is the SMB machine and share name.  This could also include a
+	workgroup name."
+    ::= { network 11 }
+
+smbMountInitiate OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS  read-write
+    STATUS	current
+    DESCRIPTION
+    	"During a write operation, this  object is used to connect or disconnect 
+	to the SMB mount point using the smbUser, smbPassword and smbMountPoint 
+	objects. 
+		
+		0 = Connect to SMB Mount Point
+		1 = Disconnect from SMB Mount Point
+	
+	Performing a read on this object returns a status indicating whether
+	or not the TNET-HD is mounted to the SMB mount point."
+    ::= { network 12 }
+ 
+domainName OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The domain name."
+    ::= { network 13 }
+ 
+tnetWirelessIPAddress OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Wireless IP Address. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 14 }
+
+tnetWirelessSubnetAddress OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Wireless Subnet Mask Address. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 15 }
+ 
+tnetWirelessGatewayAddress OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Wireless Gateway Address. The netCommit object must be set after 
+	setting this object in order for the new setting to take effect."
+    ::= { network 16 }
+ 
+tnetWirelessPriDNS OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Wireless Primary Domain Name Server. The netCommit object must 
+	be set after setting this object in order for the new setting to take effect."
+    ::= { network 17 }
+
+tnetWirelessSecDNS OBJECT-TYPE
+    SYNTAX	IpAddress
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Wireless Secondary Domain Name Server.  The netCommit object must
+	be set after setting this object in order for the new setting to take effect."
+    ::= { network 18 }
+
+tnetWirelessDHCPEnable OBJECT-TYPE
+    SYNTAX	INTEGER  { static(0), dhcp(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"TNET-HD Wireless DHCP enable object.  The netCommit object must be set 
+	after setting this object in order for the set to take effect."
+    ::= { network 19 }
+
+tnetWirelessSSID OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object defines the access point's SSID to which the media
+	player connects."
+    ::= { network 20 }
+
+tnetWirelessConnectionType OBJECT-TYPE
+    SYNTAX	INTEGER  { infrastructure(0), adhoc(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"The wireless mode used by the interface."
+    ::= { network 21 }
+
+tnetWirelessKey  OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..64))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object defines the encryption key used to connect to the 
+	access point.  This key can be a WEP, WPA or WPA2 key depending
+	on the tnetWirelessSecurity object."
+    ::= { network 22 }
+
+tnetWirelessChannel OBJECT-TYPE
+    SYNTAX 	INTEGER (0..13)
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the wireless channel used to connect to the
+	access point.  Setting the wireless channel to 0 will cause the
+	interface to pick the best channel to connect to the access point."
+    ::= { network 23 }
+
+tnetWirelessChannelStrength OBJECT-TYPE
+    SYNTAX 	Integer32
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+	"Returns the strength of the wireless signal where the media player is
+	currently connected."
+    ::= { network 24 }
+
+tnetWirelessDomainName OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The wireless interface's domain name."
+    ::= { network 25 }
+
+tnetWiredControl OBJECT-TYPE
+    SYNTAX	INTEGER { disabled(0),
+			  enabled(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to set and return the state of the wired
+	network connections on the media player. The netCommit object 
+	must be set after setting this object in order for the new 
+	setting to take effect."
+    ::= { network 26 }
+
+tnetWirelessControl OBJECT-TYPE
+    SYNTAX	INTEGER { disabled(0),
+			  enabled(1),
+			  connected(2),
+			  notConnected(3),
+			  notInstalled(4) }
+
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to set and return the state of the wireless
+	network connections on the media player. The netCommit object 
+	must be set after setting this object in order for the new 
+	setting to take effect."
+    ::= { network 27 }
+
+tnetWirelessSecurity OBJECT-TYPE
+    SYNTAX	INTEGER { none (0),
+			  wep (1),
+			  wpa (2),
+			  wpa2 (3) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to set and return the state of the wireless
+	security."
+    ::= { network 28 }
+
+tnetWirelessWepKeyIndex OBJECT-TYPE
+    SYNTAX	INTEGER { key1 (0),
+			  key2 (1),
+			  key3 (2),
+			  key4 (3) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to set and return the state of the wireless
+	wep key index number."
+    ::= { network 29 }
+
+monitorType OBJECT-TYPE
+    SYNTAX   	INTEGER { sony (1),
+    			  lg (2),
+			  nec (3),
+			  panasonic (4),
+			  pioneer (5),
+			  samsung (6),
+			  undefined (7),
+			  passthru (8) }
+    MAX-ACCESS  read-write
+    STATUS	current
+    DESCRIPTION
+    	"The type of monitor to be controlled.  This object is used to indicate 
+	which protocol to use to control the monitor."
+    ::= { monitor 1 }
+    
+monitorModel OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..64))
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Monitor Model is the name of the model connected to the TNET-HD.
+	The TNET-HD finds the model of the monitor once the monitorType
+	object is defined."
+    ::= { monitor 2 }
+
+serialControlData OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "The serial control data that is either sent to the monitor or read
+	from the monitor."
+    ::= { monitor 3 }
+
+monitorPower OBJECT-TYPE
+    SYNTAX 	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the power state of the monitor."
+    ::= { monitor 4 }
+
+monitorInput OBJECT-TYPE
+    SYNTAX 	Integer32 
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the input state of the monitor."
+    ::= { monitor 5 }
+
+monitorVolume OBJECT-TYPE
+    SYNTAX 	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the volume of the monitor."
+    ::= { monitor 6 }
+
+monitorFrontPanel OBJECT-TYPE
+    SYNTAX 	INTEGER { enable (0),
+			  disableIR (1),
+                          disableControls (2),
+			  disableBoth (3)
+			}
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the Front Panel status of the monitor."
+    ::= { monitor 7 }
+
+monitorMute OBJECT-TYPE
+    SYNTAX      INTEGER { normal (0), muted (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the mute state of monitor."
+    ::= { monitor 8 }
+
+videoDisplayResolution OBJECT-TYPE
+    SYNTAX	INTEGER (0..255)
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The resolution used to display the content."
+    ::= { monitor 9 }
+
+videoInterlacing OBJECT-TYPE
+    SYNTAX	INTEGER { deinterlaced (0), interlaced (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The interlacing mode of the video output."
+    ::= { monitor 10 }
+
+videoInterlacingValue OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The interlacing configuration value when the TNET-HD is configured
+	in deinterlaced mode."
+    ::= { monitor 11 }
+    
+monitorLocation OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "The location of the monitor."
+    ::= { monitor 12 }
+
+monitorProtocol OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"The protocol used to communicate with the monitor. This setting is
+	used in conjunction with the monitorType object to communicate with
+	the monitor.  At present, each monitor manufacturer uses only one
+	protocol.  However, if a manufacturer adds multiple protocols, this
+	object can be used to specify which protocol to use for a particular
+	manufacturer."
+     ::= { monitor 13 }
+
+serialParameters OBJECT-TYPE
+     SYNTAX	OCTET STRING (SIZE (1..16))
+     MAX-ACCESS read-write
+     STATUS     current
+     DESCRIPTION
+	 "This object is used to set the communication parameters of serial port 
+         used to connect to the monitor.  The format of the parameter string is:
+		<baud rate>,<parity>,<bits>,<stop bits>
+	 where the <baud rate> can be 1200,2400,9600,19200,38400,57600 or 115200
+	 <parity> = N,E,O (No parity, Even parity or Odd parity)
+	 <bits> = 7,8 (7 bits per byte or 8 bits per byte)
+	 <stop bits> = 1, 2 (1 stop bit or 2 stop bits)
+	 If this object is not defined, then the unit is set to the communication
+	 parameters as defined for the monitorType.  If the monitorType is set to
+	 undefined, the serial port is configured as 9600,N,8,1."
+     ::= { monitor 14 }
+
+passthruBufferEnable OBJECT-TYPE
+    SYNTAX	INTEGER { off(0), on(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object controls whether the media player uses a serial buffer
+	when configured in passthru mode.  If enabled, this buffer would be
+	used to store data from the serial port when there is no connection
+	to the passthru network port.  When a connection has been made to the
+	passthru network port, then the data in the buffer is sent out to the
+	port.  If disabled, then the data from the serial port is discarded if
+	there is no passthru network port connection."
+    ::= { monitor 15 }
+     
+passthruBufferSize OBJECT-TYPE
+    SYNTAX	INTEGER ( 1..4 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object controls the size of the passthru buffer (if enabled).
+	The passthru buffer is used to store data from the serial port when
+	there is no connection to the passthru network port.  The size of
+	the passthru buffer is specified in kilobytes."
+    ::= { monitor 16 }
+
+3DConfiguration OBJECT-TYPE
+    SYNTAX	INTEGER { auto(0), 3dEnabled(1), 2dOnly(3) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The interlacing mode of the video output."
+    ::= { monitor 17 }
+
+DisplayOutputMode OBJECT-TYPE
+    SYNTAX	INTEGER { AV(0), VGA(1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The interlacing mode of the display output."
+    ::= { monitor 18 }
+
+
+currentItemBeingPlayed OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..255))
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    	"The current media file being played.  The media file could be a
+	video, picture, flash or audio file."
+    ::= { player 1 }
+
+flippingInterval OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION  
+	"The flipping interval, in seconds, is the interval at which the
+	the TNET-HD alternates between displaying the internal image 1 and
+	internal image 2.  The flipping images are initiated in case of an error
+	condition."
+    ::= { player 2 }
+
+playVirtualChannel OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..99 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "When set, this object will play the virtual channel associated with
+	the ID that it was set to.  When read, this object returns the ID of the
+	virtual channel that is currently being played."
+    ::= { player 3 }
+
+playInternalImage OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..4 )
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "The internal Image number to be displayed on the TNET-HD.  Internal
+	Image 0 represents the bootup image of the TNET-HD."
+    ::= { player 4 }
+
+playPlaylist OBJECT-TYPE
+    SYNTAX  	OCTET STRING (SIZE (2..10))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "The playlist string is used to start a playlist:
+	        F0, F1, F2, F3 -- Starts flash based playlist.
+		R0, R1, R2, R3, R4 -- Starts RAM based playlist.
+		H0 - H255 -- Starts IDE based playlist.
+		U0 - U255 -- Starts USB based playlist.
+	The object just starts the playlist.  The playlist must already
+	exist in the flash, RAM, IDE drive or USB drive.  This object is also used
+	to start a layered playlist using the following format:
+		%layer1%layer2
+	The '%' is the delimiter between layers.  Here are some examples:
+		%r0%r1 starts r0 in layer 1 and r1 in layer 2
+		%r2    starts r2 in layer 1, no playlist is started for layer 2
+		%%r1   starts r1 in layer 2, no playlist is started for layer 1"
+    ::= { player 5 }
+
+playMedia OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the filename to be played on the TNET-HD.
+	This command is used to play any type of file including video, audio
+	tuner channel or image.  The filename must be preceded with the media
+	device type and type of file, such as:
+		ide::video://video.mpg
+		usb::picture://picture.jpg
+		tuner::14-1"
+    ::= { player 6 }
+
+playNextFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the filename to be played on the TNET-HD upon
+	completion of the file being played currently.  If there is no file
+	being played currently, this object is identical to setting the
+	playFile object. This command is used to play any type of file including 
+	video, audio or image.  The filename must be preceded with the media device 
+	type and type of file, such as:
+		ide::video://video.mpg
+		usb::picture://picture.jpg" 
+    ::= { player 7 }
+
+playerState OBJECT-TYPE
+    SYNTAX      INTEGER { idle (0),
+    			  idleWithStreamAddress (1),
+			  image (2),
+			  imageWithStreamAddress(3),
+			  imageWhileStreaming(4),
+			  streaming(5),
+			  playerError (6),
+			  streamServerError (7),
+			  networkError (8),
+			  unknownError (9),
+			  playingVideoFile (20),
+			  playingPictureFile (21),
+			  playingAudioFile (23),
+			  playingBrowser (24),
+			  filePlayError (30),
+			  menuOSD (40),
+			  userOSD (41) }
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to indicate the state of the media player. 
+	
+	idle(0) indicates the player is idle.
+	idleWithStreamAddress(1) indicates that the player is idle and a
+	streaming address has been defined.
+	image(2) indicates that an internal image is being played.
+	imageWithStreamAddress(3) indicates that an internal image is being
+	played and a streaming address has been defined.
+	imageWhileStreaming(4) indicates that the player is playing an
+	internal image which was started when the player was already streaming.
+	streaming(5) indicates that the player is streaming.
+	playerError(6) indicates that the player is in an error state.
+	streamServerError(7) indicates that the player is not receiving a
+	stream from the stream server.
+	networkError(8) indicates a network error.
+	unknownError(9) indicates an unclassified error.
+	playingVideoFile(20) indicates that the player is playing a video file.
+	playingAudioFile(21) indicates that the player is playing an audio file.
+	playingPictureFile(23) indicates that the player is playing a picture file.
+	filePlayError(30) indicates the player has an error with the file.
+	"
+    ::= { player 8 }
+
+playMode OBJECT-TYPE
+    SYNTAX	INTEGER { normal (0),
+                          stopContent (1),
+                          fastforward (2),
+			  rewind (3),
+			  chapterplus (4),
+			  chapterminus (5),
+			  pause (6),
+			  stopAll (7), 
+			  stopMenu (8),
+			  stopVideoLayer(17),
+			  stopHtmlLayer(33) }
+    MAX-ACCESS	read-write
+    STATUS      current	
+    DESCRIPTION
+    	"This object is used to control the playing of the currently playing
+	media file.  It is meant for future use."
+    ::= { player 9 }
+
+virtualChannelID OBJECT-TYPE
+    SYNTAX	INTEGER ( 1..99 )
+    MAX-ACCESS	read-write
+    STATUS      current	
+    DESCRIPTION
+    	"This object is used to set the virtual channel ID to be used by the
+	virtualChannelMedia object. virtualChannelID indicates the ID where 
+	the TNET-HD will read or write the virtual channel media address."
+    ::= { player 10 }
+
+virtualChannelMedia OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..64))
+    MAX-ACCESS	read-write
+    STATUS      current	
+    DESCRIPTION
+    	"This object is used to set or get the media address for the ID as
+	defined by the virtualChannelID object. The media address can be any 
+	type of file including video, audio or image, or a tuner or streaming
+	address.  Here are some examples:
+		ide::video://video.mpg
+		usb::picture://picture.jpg
+		tuner://14-1
+		udp://229.1.2.10:5501
+		rtp://229.1.4.5:4589"
+    ::= { player 11 }
+
+videoType OBJECT-TYPE
+    SYNTAX	INTEGER {  auto (0),
+                           mpeg2HD (1),
+			   mpeg2HDPacked (2),
+			   mpeg2HDDeInt (3),
+			   mpeg2HDPackedDeInt (4),
+			   mpeg2SD (5),
+			   mpeg2SDPacked (6),
+			   mpeg2SDDeInt (7),
+			   mpeg2SDPackedDeInt (8),
+			   mpeg4HD (9),
+			   mpeg4HDPadding (10),
+			   mpeg4HDPacked (11),
+			   mpeg4HDDeInt (12),
+			   mpeg4HDDeIntPadding (13),
+			   mpeg4HDPackedDeInt (14),
+			   wmvSD (15),
+			   wmv816P (16),
+			   wmvHD (17),
+			   divx3SD (18),
+			   divx3HD (19),
+			   divx3SDPacked (20),
+			   divx3HDPacked (21),
+			   h264SD (22),
+			   h264HD (23),
+			   h264SDDeInt (24),
+			   h264HDDeInt (25),
+			   vc1SD (26),
+			   vc1HD (27) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The video codec used to decode the stream or file."
+    ::= { player 12 }
+
+audioType OBJECT-TYPE
+    SYNTAX	INTEGER {
+                         auto (0),
+                         mpeg1layer3 (1),
+			 mpeg2layer1 (2),
+			 mpeg2layer2 (3),
+			 mpeg2layer3 (4),
+			 mpeg2 (5),
+			 mpeg1 (6),
+			 ac3 (7),
+			 pcm (8),
+			 dts (9),
+			 dvdaudio (10),
+			 aac (11),
+			 wma (12) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The audio codec used to decode the stream or file."
+    ::= { player 13 }
+
+audioSampFreq OBJECT-TYPE
+    SYNTAX	INTEGER ( 8000..384000 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The audio sampling frequency used to decode the stream or file."
+    ::= { player 14 }
+
+defaultStartupItem OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..384))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The default startup item.  This object is set with the same format as
+	the playFile and playNextFile objects."
+    ::= { player 15 }
+
+currentFrameCount OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    	"The frame count of stream or file being played."
+    ::= { player 16 }
+
+defaultIdlePlaylist OBJECT-TYPE
+    SYNTAX  	OCTET STRING (SIZE (2..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "The playlist string is used to define the default idle playlist:
+	        F0, F1, F2, F3 -- Flash based playlists.
+		R0, R1, R2, R3, R4 -- RAM based playlists.
+		H0 - H255 -- IDE based playlists.
+		U0 - U255 -- USB based playlists.
+    	The default idle playlist is started automatically by the player when
+	the player has been idle for a certain number of seconds as defined by
+	the idleDetect object."
+    ::= { player 17 }
+
+idleDetect OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object defines the number of seconds of idle time before the player
+	automatically starts the default idle playlist as defined by the
+	defaultIdlePlaylist object."
+    ::= { player 18 }
+
+playerVolume OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the volume of the player.  This
+	control is independent of the monitorVolume object, which controls the
+	volume of the monitor." 
+    ::= { player 19 }
+
+playerMute OBJECT-TYPE
+    SYNTAX      INTEGER { normal (0), muted (1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the mute state of the player. This
+	control is independent of the monitorMute object, which controls the
+	mute state of the monitor." 
+    ::= { player 20 }
+
+speedControl OBJECT-TYPE
+    SYNTAX	INTEGER (5 .. 250)
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used to control the speed of the playback."
+    ::= { player 21 }
+
+videoSysType OBJECT-TYPE
+    SYNTAX	INTEGER { auto(0),
+			  mpeg2Transport(1),
+			  mpeg2DVD(2),
+			  mpeg2Program(3),
+			  mpeg1(4),
+			  mpeg4(5),
+			  asf(6),
+			  avi(7),
+			  elementaryVideo(8),
+			  elementaryAudio(9),
+			  mpeg2Transport192(10) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The video system type."
+    ::= { player 22 }
+			  
+coordinateMode OBJECT-TYPE
+    SYNTAX	INTEGER { relative(0), absolute(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global coordinate mode for the entries in the playlist that is going to be 
+	started. Setting this object to relative(0) uses a percentage based coordinate 
+	system, while absolute(1) configures the player to used a pixel based coordinate 
+	system.  The coordinate mode is used for both the size and position settings.  
+	This parameter overrides the setting specified in the playlist and has to be 
+	specified before starting the playlist. It is not saved and is valid only for 
+	the first playlist started after setting the object."
+    ::= { player 23 }
+
+xPosition OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global X position for the entries in the playlist that is going to be 
+ 	started. Depending on the coordinateMode object, the xPosition will represent 
+	either an absolute pixel coordinate (limited by the current screen resolution) or a
+	percentage based coordinate (0 to 100).  This parameter overrides the setting 
+	specified in the playlist and has to be specified before starting the playlist.  
+	It is not saved and is valid only for the first playlist started after setting 
+	the object."
+    ::= { player 24 }
+
+yPosition OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global Y position for the entries in the playlist that is going to be 
+ 	started. Depending on the coordinateMode object, the yPosition will represent 
+	either an absolute pixel coordinate (limited by the current screen resolution) or a
+	percentage based coordinate (0 to 100).  This parameter overrides the setting 
+	specified in the playlist and has to be specified before starting the playlist.
+	It is not saved and is valid only for the first playlist started after setting 
+	the object."
+    ::= { player 25 }
+
+xSize OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global X size for the entries in the playlist that is going to be 
+ 	started. Depending on the coordinateMode object, the xSize object will represent 
+	either an absolute pixel coordinate (limited by the current screen resolution) or a
+	percentage based coordinate (0 to 100).  This parameter overrides the setting 
+	specified in the playlist and has to be specified before starting the playlist.  
+	It is not saved and is valid only for the first playlist started after setting 
+	the object."
+    ::= { player 26 }
+
+ySize OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global Y size for the entries in the playlist that is going to be 
+ 	started. Depending on the coordinateMode object, the ySize object will represent 
+	either an absolute pixel coordinate (limited by the current screen resolution) or a
+	percentage based coordinate (0 to 100). This parameter overrides the setting 
+	specified in the playlist and has to be specified before starting the playlist.  
+	It is not saved and is valid only for the first playlist started after setting 
+	the object."
+    ::= { player 27 }
+
+videoMode OBJECT-TYPE
+    SYNTAX	INTEGER { normal(0), wide(1), anamorphic(2), full(3) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global video mode for the entries in the playlist that is going to be 
+ 	started. This parameter overrides the setting specified in the playlist and
+	has to be specified before starting the playlist.  It is not saved and is valid 
+	only for the first playlist started after setting the object."
+    ::= { player 28 }
+
+alphaLayer OBJECT-TYPE
+    SYNTAX	INTEGER (0 .. 255)
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The global alpha layer setting for the entries in the playlist that is going to be 
+ 	started. This parameter overrides the setting specified in the playlist and
+	has to be specified before starting the playlist.  It is not saved and is valid 
+	only for the first playlist started after setting the object."
+    ::= { player 29 }
+
+activeLayer OBJECT-TYPE
+    SYNTAX	INTEGER (0 .. 1)
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object must be setting before setting the coordinateMode, xPosition, yPosition,
+	xSize, ySize, videoMode and  alphaLayer objects.  The global parameters apply to the
+	layer that this object is set to."
+    ::= { player 30 }
+
+playBrowser OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the browser URL to be played on the TNET-HD."
+    ::= { player 31 }
+
+playLayer OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the content to be played on the TNET-HD in the
+	layer specified by the activeLayer object.  This command is used to play
+	any type of content including video, audio, web or image.  The content must
+	be preceded with the media device type and type of file, such as:
+		ide::video://video.mpg
+		usb::picture://picture.jpg"
+    ::= { player 32 }
+
+videoPID OBJECT-TYPE
+    SYNTAX	INTEGER (0 .. 8192)
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The video PID of the video file or stream."
+    ::= { player 33 }
+
+audioPID OBJECT-TYPE
+    SYNTAX	INTEGER (0 .. 8192)
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The audio PID of the video file or stream."
+    ::= { player 34 }
+
+playerBrightness OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the brightness setting of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 brightness."
+    ::= { player 35 }
+
+playerContrast OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the contrast setting of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 contrast."
+    ::= { player 36 }
+
+playerColor OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the color setting of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 color."
+    ::= { player 37 }
+
+playerTint OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the tint setting of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 tint."
+    ::= { player 38 }
+
+horizontalSize OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the horizontal size of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 horizontal size."
+    ::= { player 39 }
+
+horizontalShift OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the horizontal shift of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 horizontal shift."
+    ::= { player 40 }
+
+verticalSize OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the vertical size of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 vertical size."
+    ::= { player 41 }
+
+verticalShift OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..100 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to control the vertical shift of the player.
+	 Setting this object to 50 will cause the player to use the default
+	 vertical shift."
+    ::= { player 42 }
+
+
+networkBurstBufferSize OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..4096 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The size of the network burst buffer."
+    ::= { player 43 }
+
+videoJitterSize OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..4096 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"The size of the video jitter buffer."
+    ::= { player 44 }
+
+rtspKeepAlive OBJECT-TYPE
+    SYNTAX	INTEGER { off(0), on(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"Controls the state of the RTSP keep alive."
+    ::= { player 45 }
+
+virtualChannelAlias OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..8))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to associate a virtual channel media address with
+         an alias based on the setting of the virtualChannelID object." 
+    ::= { player 46 }
+
+virtualChannelDisplayPosition OBJECT-TYPE
+    SYNTAX	INTEGER { bottomleft(0),
+			  topleft(1),
+			  bottomright(2),
+			  topright(3) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to define the position of the virtual channel
+	alias display when the virtual channel is being played."
+    ::= { player 47 }
+
+virtualChannelEnable OBJECT-TYPE
+    SYNTAX	INTEGER { disabled (0), enabled (1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to enable or disable the virtual channel
+	function.  When disabled, pressing numbers on the remote control will
+	select a tuner channel.  Otherwise, they will select the virtual
+	channel."
+    ::= { player 48 }
+
+virtualChannelMin OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..98 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to define the lowest minimum channel to change to
+	when the channel down button is pressed on the remote.  If already at
+	the lowest channel, the media player will wraparound to the maximum
+	channel."
+   ::= { player 49 }
+
+virtualChannelMax OBJECT-TYPE
+    SYNTAX	INTEGER ( 1..99 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to define the highest maximum channel to change to
+	when the channel up button is pressed on the remote.  If already at
+	the highest channel, the media player will wraparound to the minimum
+	channel."
+   ::= { player 50 }
+
+virtualChannelDisplayDuration OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to define the length of time that the virtual
+	channel alias display is shown on the screen."
+   ::= { player 51 }
+
+videoProfileEnable OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to enable/disable the video profile
+	functionality.  The video profile feature allows fast switching
+	between video files."
+   ::= { player 52 }
+
+videoProfileRegister OBJECT-TYPE
+    SYNTAX	INTEGER { allFiles (0), newFiles (1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This object is used to register new video profiles.  Writing to
+	this object will cause the player to play all the video files on the
+	player which do not already have a video profile, which will then
+	create a new profile for each video file. The allFiles(0) option will
+	play, and hence create a new profile, for all video files on the
+	player.  The newFiles(1) option will only play the video files for
+	which a video profile doesn't already exist."
+   ::= { player 53 }
+
+closedCaption OBJECT-TYPE
+    SYNTAX	INTEGER { disabled (0),
+			  cc1(1),
+        cc2(2),
+			  cc3(3),
+			  cc4(4) ,
+			  eia708(5),
+		} 
+
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"This object is used to control the close captioning."
+    ::= { player 54 }
+
+bootSplashPlayUrl OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to set boot splash play URL."
+    ::= { player 55 }
+
+VideoSyncMode OBJECT-TYPE
+	SYNTAX	INTEGER { disabled(0), master(1), slave(2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to set video sync mode."
+    ::= { player 56 }
+
+VideoSyncMaster OBJECT-TYPE
+    SYNTAX  OCTET STRING (SIZE (0..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to set video sync master."
+    ::= { player 57 } 
+
+OutputSpdifMode OBJECT-TYPE
+	SYNTAX	INTEGER { Disabled(0), Compressed-AC3(1), Uncompressed-PCM(2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to set output spdif mode."
+    ::= { player 58 }
+
+HtmlEvalJavascript OBJECT-TYPE
+    SYNTAX  OCTET STRING (SIZE (0..4096))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to set html eval javascript."
+    ::= { player 59 }
+
+VideoLayerPlayMedia OBJECT-TYPE
+    SYNTAX  OCTET STRING (SIZE (0..4096))
+    MAX-ACCESS  write-only
+    STATUS      current
+    DESCRIPTION
+        "video layer play media."
+    ::= { player 60 }
+
+HtmlLayerPlay OBJECT-TYPE
+    SYNTAX  OCTET STRING (SIZE (0..4096))
+    MAX-ACCESS  write-only
+    STATUS      current
+    DESCRIPTION
+        "html layer play media."
+    ::= { player 61 }
+    
+playNext OBJECT-TYPE
+    SYNTAX  OCTET STRING (SIZE (0..512))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Play next item."
+    ::= { player 62 }
+    
+videoRotation OBJECT-TYPE
+    SYNTAX	INTEGER { 0(0),90(1),180(2),270(3)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Video Rotation."
+    ::= { player 63  }
+
+image1SourceAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"The Image 1 Source Address is the http source address of the image
+	downloaded in internal flash Image 1.  When this object is set, the
+	TNET-HD attempts to download the image and store it as internal 
+	flash image 1."
+    ::= { media 1 }
+	
+image2SourceAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"The Image 2 Source Address is the http source address of the image
+	downloaded in internal flash Image 2.  When this object is set, the
+	TNET-HD attempts to download the image and store it as internal 
+	flash image 2."
+    ::= { media 2 }
+
+image3SourceAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"The Image 3 Source Address is the http source address of the image
+	downloaded in internal flash Image 3.  When this object is set, the
+	TNET-HD attempts to download the image and store it in internal 
+	flash image 3."
+    ::= { media 3 }
+
+activeMedia OBJECT-TYPE
+    SYNTAX	INTEGER { flash (0), usb (1), sd (2), hdd (3) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"Indicated the device number used for various media commands. 
+	 The listing and free space commands use this object to determine
+	 which media they will use."
+    ::= { media 4 }
+
+fileTypeIndex OBJECT-TYPE
+    SYNTAX	INTEGER { video(0),
+			  audio(1),
+                          picture(2),
+			  playlist(3),
+			  browser(4) ,
+			  videoProfile(5) } 
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+    	"The index used by the fileListingTable, renameMediaFile and
+	deleteMediaFile objects to determine which file type to act on."
+    ::= { media 5 }
+
+fileListingTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF DirListingEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "This table uses the fileTypeIndex object to determine which media
+	type to get.  When read, the table returns the fileName and fileSize
+	objects.  The fileSize object reflects the size of the filename. "
+    ::= { media 6 }
+
+dirListingEntry OBJECT-TYPE
+    SYNTAX     DirListingEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+            "An entry (conceptual row) in the fileListingTable."
+    INDEX      { fileIndex }
+    ::= { fileListingTable 1 }
+
+DirListingEntry ::= SEQUENCE {
+    fileIndex     INTEGER,
+    fileName      OCTET STRING,
+    fileSize      Counter64
+}
+
+fileIndex OBJECT-TYPE
+    SYNTAX     INTEGER (0..2147483647)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+            "The auxiliary variable used for identifying instances
+            of the columnar objects in the fileListingTable."
+    ::= { dirListingEntry 1 }
+
+fileName OBJECT-TYPE
+    SYNTAX     OCTET STRING (SIZE (256))
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+            "The filename of the media file." 
+    ::= { dirListingEntry 2 }
+
+fileSize OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+            "The filesize of the media file."
+    ::= { dirListingEntry 3 }
+
+renameMediaFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..512))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used to rename a file.  The object must be set with the
+	following format:
+	               currentfilename,newfilename
+        The object uses the fileTypeIndex to determine whether the file to
+	renamed is a picture, video, audio or playlist file."
+    ::= { media 7 }
+
+deleteMediaFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..256))
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used to delete a media file.  This object uses the
+	fileTypeIndex object to determine whether the file to be deleted is a
+	picture, video, audio or playlist file."
+    ::= { media 8 }
+
+freeSpace OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+    	"Returns the free space, in Kbytes, of the active media device."
+    ::= { media 9 }
+
+storeVideoFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the HTTP source address of the video file to be 
+	downloaded to the TNET-HD."
+    ::= { media 10 }
+
+storeAudioFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the HTTP source address of the audio file to be 
+	downloaded to the TNET-HD."
+    ::= { media 11 }
+
+storeImageFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the HTTP source address of the image file to be 
+	downloaded to the TNET-HD."
+    ::= { media 12 }
+
+storePlaylistFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the HTTP source address of the playlist file to be 
+	downloaded to the TNET-HD. The playlist will be stored using the
+	filename specified in the targetPlaylistFile object."
+    ::= { media 14 }
+
+transferControl OBJECT-TYPE
+    SYNTAX      INTEGER { idle(0),
+                          success(1),
+			  canceled(2),
+			  noServer(128),
+			  netError(129),
+			  fileError(130),
+			  largeFileError(131),
+			  smallFileError(132),
+			  ftpLoginError(133),
+			  otherTransferError(134),
+			  transferAborted(135),
+			  xappDone(144),
+			  xappInProgress(145),
+			  xappTransferError(146),
+			  firmwareDone(240),
+			  firmwareUploading(241),
+			  firmwareBurning1(242),
+			  firmwareBurning2(243),
+			  firmwareBurning3(244),
+			  firmwareFailed(245),
+			  firmwareBadAddress(246),
+			  firmwareConnectionError(247),
+			  firmwareBadFile(248),
+			  firmwareTooLarge(249),
+			  firmwarePowerError(250),
+			  firmwareOtherError(251),
+			  inProgress(255) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used to return the transfer status of the TNET-HD.
+	This status reflects the result of media download, internal image
+	download or a firmware upgrade.  The transfer status of a
+	media/internal image is reflected with a status of 135 and below 
+	in addition to 255.  The firmware upgrade status will return a 
+	status of 240 to 251.  Writing transferAborted(135) to this object
+	will aborted the file transfer currently in progress."
+    ::= { media 15 }
+
+storeBrowserFile OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the HTTP source address of the browser file to be 
+	downloaded to the TNET-HD."
+    ::= { media 16 }
+
+ftpPut OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object can be used to put content or playlists to a specified FTP site.
+	The object must be written with the type of file, the source filename and the
+	the FTP destination address delimited by commas.  The type of file can be VIDEO,
+	AUDIO, PICTURE, BROWSER, PLAYLIST or PROFILE.  The FTP destination address must 
+	be specified in an FTP URL format with embedded username and password if applicable.
+	If no username or password is specified, the media player will login to the FTP 
+	site as anonymous.  Here are some examples:
+
+		VIDEO, myvideo.mpg, ftp://username:password@ftp.mysite.com/videos, 
+		PICTURE, mypicture.jpg, ftp://ftp.mysite.com/pictures,
+		BROWSER, myhtml.html, ftp://ftp.mysite.com/browser,
+		PLAYLIST, myplaylist.pl, ftp://ftp.mysite.com/playlists,
+		PROFILE, mypicture.prf, ftp://ftp.mysite.com/profiles"
+    ::= { media 17 }
+
+cardCurrentStatus OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (32..256))
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "The card status of the TNET-HD."
+    ::= { system 1 }
+
+currentClockTicks OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The number of clock ticks that the TNET-HD is set to.
+
+        the currentClockTicks have to be set the date between 2000/1/1 to 2038/1/1, 
+        if the date is earlier than 2000/1/1, an SNMP success is returned, but actually 
+        the currentClockTicks sis failed to save in the RTC. "
+    ::= { system 2 }
+
+mediaKey OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+    	"The key used to format and enable the media device.  Reading this object
+	will return the model of the media device."
+    ::= { system 3 }
+
+formatMedia OBJECT-TYPE
+    SYNTAX	INTEGER { format(0), repair(3) } 
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+		"This object is used to format an activeMedia.
+		
+		format(0) formats the activeMedia.
+		repair(3) is used to repair the activeMedia.
+		
+		The format command is executed once this object is set. 
+		A get of this object always returns 0."
+    ::= { system 4 }
+
+scanMedia OBJECT-TYPE
+    SYNTAX	INTEGER { ide (0), usb (1) } 
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+	 "This object is used to perform a scan operation on a specific device:
+
+	 ide(0) scans the IDE device
+	 usb(1) scans the USB device
+
+	 The scan command is used to fix errors on the device.  The scan operation
+         is executed once this object is set. A get of this object always returns 0."
+    ::= { system 5 }
+
+mediaStatus OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(12))
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+    	"Returns the media device status.  This object reflects the IDE drive
+	or USB drive status. "
+    ::= { system 6 }
+
+rebootSystem OBJECT-TYPE
+    SYNTAX	Integer32 
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+    	"Initiates a reboot of the system.  The value that this object is set
+	with is ignored and it always returns 0 when read."
+    ::= { system 7 }
+
+firmwareUpgradeAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"Setting this object initiates a firmware upgrade of the TNET-HD.
+	The object is set with the HTTP source address from where the firmware is 
+	downloaded.  The TNET-HD will automatically start downloading and then 
+	programming the flash once this object is set."
+    ::= { system 8 }
+
+autoAnnounce OBJECT-TYPE
+    SYNTAX	INTEGER ( 0..65535 )
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The TNET-HD can be configured to periodically send out an
+	auto-announce UDP broadcast packet.  This packet contains the same
+	information as the cardCurrentState object.  If the auto-announce
+	object is set to 0, the auto-announce feature is disable.  Otherwise,
+	the integer reflects the number of seconds at which the auto-announce
+	packet is transmitted by the TNET-HD."
+    ::= { system 9 }
+
+communicationProtocol OBJECT-TYPE
+    SYNTAX	INTEGER { snmp(0), other(1), both(2) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "The TNET-HD's communication protocol is defined by this object.
+	Upon powerup, the TNET-HD accepts both SNMP and a proprietary
+	communciation protocol.  Once the communication protocol is set to
+	either snmp(0) or other(1), it can not be changed back to both(2), but
+	the protocol can be switch between snmp(0) and other(1)."
+    ::= { system 10 }
+
+configSave OBJECT-TYPE
+    SYNTAX	INTEGER { unchanged(0), changed(1), default(2) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"When read, this object indicates whether a change has been made to
+	the configuration of the TNET-HD.  When set, the configuration is
+	saved into non-volatile memory.  This object MUST be set for any
+	configuration changes to take effect.  The value that this object is
+	set with is ignored unless it is default(2).  Writing default(2) to
+	this object will default all configuration parameters except for the
+	IP address settings."
+     ::= { system 11 }
+
+configSaveOption OBJECT-TYPE
+    SYNTAX	INTEGER { onrequest(0), onchange(1) }
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used to control when the configuration is saved.  If
+	set to onrequest(0), the configuration is only saved when the
+	configSave MIB object is written to.  If set to onchange(1), the
+	configuration is written to every time an object is changed.  It is
+	recommended to keep this object set to onrequest(0) since that
+	minimizes writing the configuration to the flash."
+    ::= { system 12 }
+
+tnetVersion OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+        "This object returns the version of the TNET-HD.  The 32-bit integer
+	contains four 8-bit numbers which are, from most significant to least
+	significant, the model number, hardware version, major version and minor
+	version."
+     ::= { system 13 }
+
+selfTest OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used initiate the TNET-HD self-test.  The object is
+	set with a parameter that determines the type of test that is
+	executed.  A read of this object always returns 0."
+     ::= { system 14 }
+
+priTimeServer OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..128))
+    MAX-ACCESS	read-write
+    STATUS      current	
+    DESCRIPTION
+        "Primary Time Server Address for the Simple Network Time Protocol.
+	The SNTP server is only started if either the priTimeServer or secTimeServer
+	objects are defined."
+     ::= { system 15 }
+
+secTimeServer OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (1..128))
+    MAX-ACCESS	read-write
+    STATUS      current	
+    DESCRIPTION
+        "Secondary Time Server Address for the Simple Network Time Protocol.
+	The SNTP server is only started if either the priTimeServer or secTimeServer
+	objects are defined."
+     ::= { system 16 }
+
+timeZone OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+        "This object is used to determine the TNET300's time zone.  The time
+	zone is referenced from the Greenwich Mean Time and does not
+	automatically account for daylight savings time."
+     ::= { system 17 }
+
+pushConfig OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the FTP source address of a configuration
+        file of the TNET-HD.  The TNET-HD will setup its configuration to
+        match all of the items in this file except for the network
+        parameters."
+    ::= { system 18 }
+
+pullConfig OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the FTP destination address where the TNET-HD
+        will write its configuration."
+    ::= { system 19 }
+
+restorePreviousConfiguration OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"When this object is written to with a 0, the TNET-HD will roll back
+        to the previous configuration."
+    ::= { system 20 }
+
+transferLog OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the FTP destination address where the TNET-HD
+        will write its log file data."
+    ::= { system 21 }
+
+softwareUpgradeAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"Setting this object initiates a software upgrade of the TNET-HD.
+	The object is set with the HTTP source address from where the software is 
+	downloaded.  The TNET-HD will automatically start downloading and then 
+	update the software once this object is set."
+    ::= { system 22 }
+
+userOSDAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..512))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"The object is used to define the HTTP address of the user-based on screen
+	display menu.  Once this object has been defined, the user-based OSD will
+	be started when the user OSD button is pressed on the remote."
+    ::= { system 23 }
+
+deviceKey OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(0..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to store the device key of the player.  It always returns
+	an empty string when read.  The media player must be rebooted after changing
+	the deviceKey."
+    ::= { system 24 }
+
+enabledFeatures OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    	"The features that have been enabled on this player."
+    ::= { system 25 }
+
+maintainLog OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object stores the RAM based log data onto the hard drive."
+    ::= { system 26 }
+
+irControl OBJECT-TYPE
+    SYNTAX 	INTEGER { disable (0), enable (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the IR Control status of the player."
+    ::= { system 27 }
+ 
+trapEnable OBJECT-TYPE
+    SYNTAX 	INTEGER { disable (0), enable (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the Trap Enable status of the player."
+    ::= { system 28 }
+ 
+trapReceiverAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..64))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to store the trap receiver address where traps
+    are sent."
+    ::= { system 29 }
+
+webAdminPassword OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object is used to store the password used to login to the media
+	player's website."
+    ::= { system 30 }
+
+snmpV3Only OBJECT-TYPE
+    SYNTAX 	INTEGER { disable (0), enable (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "If enabled, SNMPv3 is required to get and set objects."
+    ::= { system 31 }
+
+multipleUpgradeAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"Setting this object initiates a multiple upgrade of the TNET-HD.
+	The object is set with the HTTP source address from where the multiple
+	upgrade tar file is downloaded.  The TNET-HD will automatically start 
+	downloading and processing the multiple upgrade file once this object 
+	is set."
+    ::= { system 32 }
+
+gpioInterruptSource OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "This object returns the source of the last GPIO interrupt or -1 if
+	none has occurrred."
+    ::= { system 33 }
+
+configDateTime OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Writing any value to this objects results in the player transfering
+	the system time to the hardware clock (real-time clock)."
+    ::= { system 34 }
+
+loggingEnable OBJECT-TYPE
+    SYNTAX 	INTEGER { disable (0), enable (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the logging enable status of the player.  If
+	logging is enabled, then media events, display events are logged on
+	the player.  maintainLog and transferLog are used to manage and
+	retrieve the log events."
+    ::= { system 35 }
+
+xappVersion OBJECT-TYPE
+    SYNTAX	OCTET STRING
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "The version of the external application (XAPP) if any.  An XAPP might
+	still be running without reporting a version number."
+    ::= { system 36 }
+
+systemUpgradeAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..256))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"Setting this object initiates a system upgrade of the TNET-HD.
+	The object is set with the HTTP source address from where the system
+	upgrade tar file is downloaded.  The TNET-HD will automatically start 
+	downloading and processing the system upgrade file once this object 
+	is set."
+    ::= { system 37 }
+
+autoReboot OBJECT-TYPE
+    SYNTAX 	INTEGER { disable (0), enable (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the auto reboot state of the player.  If
+	enabled, then the media player will automatically reboot after the
+	time specified in the autoRebootInterval MIB object.  The setting of
+	this object takes effect after restart." 
+    ::= { system 38 }
+
+autoRebootInterval OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "The interval, in seconds, upon which the player will automatically
+	reboot if the autoReboot MIB object is enabled.  If this object is set
+	to 0, autoReboot is effectively disabled regardless of the state of
+	the autoReboot MIB object.  The minimum auto-reboot time is 60 seconds,
+	so setting this object to any non-zero value below 60 will result in
+	a reboot interval of 60 seconds." 
+    ::= { system 39 }
+
+audioOutputMode OBJECT-TYPE
+    SYNTAX	INTEGER { normal(0),disableHDMI(1), disableAll(2), disableAnalog(3) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object controls which audio output is disabled. normal(0)
+	is the default state in which all the audio outputs would be
+	turned out.  disableHDMI(1) only disables the HDMI output and
+	disableAll(2) would disable all the outputs (similar to mute)."
+    ::= { system 42 }
+
+snmpCommunity OBJECT-TYPE
+    SYNTAX 	OCTET STRING (SIZE (0..32))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Configuring the agent so that you can change the community names, and give
+	yourself write access to the mib tree as well."
+    ::= { system 43 }
+
+dispOsdResolutionId OBJECT-TYPE
+    SYNTAX	INTEGER { default(0), res1366x768(1), res1920x1080(2), res3840x2160(3) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "dispOsdResolutionId."
+    ::= { system 44 }
+
+cpuSerialNo OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (32))    
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "cpuSerialNo."
+    ::= { system 45 }
+
+IrOut OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (4))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "IR Out."
+    ::= { system 46 }
+
+touchScreenCalibrate OBJECT-TYPE
+    SYNTAX 	INTEGER { run (0), exit (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "control touch screen calibrate app."
+    ::= { system 47 }
+
+HdmiCecCtrl OBJECT-TYPE
+    SYNTAX	Integer32 { ImageViewOn (1), Standby (2), VolumeUp (3) , VolumeDown (4) , VolumeMute (5) }
+    MAX-ACCESS	write-only
+    STATUS      current
+    DESCRIPTION
+        "hdmi cec ctrl."
+    ::= { system 48 }
+    
+IrLevelOut OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (0..2048))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "IR Level Out."
+    ::= { system 49 }
+    
+enableAudio6Ch OBJECT-TYPE
+    SYNTAX	Integer32 { disable(0),enable(1)}
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "enable hdmi have six channel."
+    ::= { system 50 }
+
+  hardwareCapability OBJECT-TYPE
+    SYNTAX	Integer32 { unrecognized(0),MP800 7252D(1),MP800 7252S(2)}    
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "hardwareCapability."
+    ::= { system 51 }
+
+tnetReady NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION 
+	"This trap is sent out after the media player has completed its
+	initialization and is ready to play content."
+    ::= { tnetTraps 1 }
+
+restartInitiated NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION 
+	"This trap is sent out after the media player has been commanded
+	to restart."
+    ::= { tnetTraps 2 }
+
+streamDetect NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION 
+	"This trap is sent out when the media player detects a stream.
+	The player will only attempt to detect a stream when it has been
+	commanded to play a stream."
+    ::= { tnetTraps 3 }
+
+streamLoss NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION 
+	"This trap is sent out when the media player looses detection of
+	a stream that he has previously detected successfully."
+    ::= { tnetTraps 4 }
+
+powerOff NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION 
+	"This trap is sent out after the media player has been commanded
+	to power off."
+    ::= { tnetTraps 5 }
+
+gpioInterrupt NOTIFICATION-TYPE
+    OBJECTS { gpioInterruptSource }
+    STATUS current
+    DESCRIPTION
+	"This trap is sent out when the media player receives an interrupt
+	from one of the GPIO lines.  The gpioTrapReceiverAddress is used to
+	send out the trap instead of the trapReceiverAddress."
+    ::= { tnetTraps 6 }
+
+wifiStatus NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION
+	"This trap is sent out when the wifi connected or failed."
+    ::= { tnetTraps 7 }
+
+gpioMode OBJECT-TYPE
+    SYNTAX 	INTEGER { discrete (0), muxed (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the GPIO mode of the player."
+    ::= { gpio 1 }
+
+j12GPIO1 OBJECT-TYPE
+    SYNTAX 	INTEGER { low (0), high (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns J12 GPIO 1 input/output."
+    ::= { gpio 2 }
+
+j12GPIO2 OBJECT-TYPE
+    SYNTAX 	INTEGER { low (0), high (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns J12 GPIO 2 input/output."
+    ::= { gpio 3 }
+
+j12All OBJECT-TYPE
+    SYNTAX 	INTEGER { lowLow (0),
+			  highLow (1),
+			  lowHigh (2),
+			  highHigh (3) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns J12 GPIO 1 and GPIO 2 inputs/outputs."
+    ::= { gpio 4 }
+
+j12PulseWidth OBJECT-TYPE
+    SYNTAX 	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "Controls or returns the pulse width of the J12 output pins.
+	 The pulse width is defined in 100 msec increments."
+    ::= { gpio 5 }
+
+j12PulseHigh OBJECT-TYPE
+    SYNTAX 	INTEGER { out1LHL (0),
+			  out2LHL (1),
+			  bothLHL (2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to pulse one or both of the outputs.  The
+	 output(s) are pulsed with low-high-low or high-low-high.  The
+	 pulse width is defined by the j12PulseWidth object.  This object
+	 always returns 0 when read."
+    ::= { gpio 6 }
+
+j12PulseLow OBJECT-TYPE
+    SYNTAX 	INTEGER { out1HLH (0),
+			  out2HLH (1),
+			  bothHLH (2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to pulse one or both of the outputs.  The
+	 output(s) are pulsed with low-high-low or high-low-high.  The
+	 pulse width is defined by the j12PulseWidth object.  This object
+	 always returns 0 when read."
+    ::= { gpio 7 }
+
+j24SelectInput OBJECT-TYPE
+    SYNTAX	INTEGER (0..7)
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to select the input used by the j24ReadInput
+	 object."
+    ::= { gpio 8 }
+
+j24ReadInput OBJECT-TYPE
+    SYNTAX 	INTEGER { low (0), high (1) }
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "Returns the state of the J24 input, as selected by the j24SelectInput
+         object."
+    ::= { gpio 9 }
+
+j24ReadAll OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (8))
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+         "Returns the state of the J24 inputs.  This object will always return
+	  a 8-character string that represents the current state of each
+          input."
+    ::= { gpio 10 }
+
+j24SelectOutput OBJECT-TYPE
+    SYNTAX	INTEGER (0..15)
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to select the output used by the j24Output
+	 object."
+    ::= { gpio 11 }
+
+j24Output OBJECT-TYPE
+    SYNTAX 	INTEGER { low (0), high (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to set, or return what was previously set, the
+         state of the output as selected by the j24SelectOutput object."
+    ::= { gpio 12 }
+
+j24WriteAll OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (16))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to the state of the J24 outputs.  It must be
+	written with a 16-character string.  Each character must either be a
+	'0' or a '1'."
+    ::= { gpio 13 }
+
+j24InvertInput OBJECT-TYPE
+    SYNTAX 	INTEGER { normal (0), invert (1) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object when set to 1 will invert J24 Input 0 and J24 Input 3."
+    ::= { gpio 14 }
+
+j24InterruptControl OBJECT-TYPE
+    SYNTAX 	INTEGER { disabled (0), positiveEdge (1), negativeEdge(2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to disable or enable interrupts.  If enabled
+        (either postiveEdge or negativeEdge), the media player will either
+        send a trap or send an internal message to the external application
+	(XAPP) when an interrupt occurs.  Please see gpioTrapAddress object
+	for more details."
+    ::= { gpio 15 }
+
+gpioTrapAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..64))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+     	"This object is used to store the trap receiver address where traps
+    are sent when a GPIO interrupt occurs.  The j24InterruptControl object has
+    to be enabled before a trap is sent.  If this object is not set, then the
+    media player sends an internal message to the external application (XAPP) 
+    when a GPIO interrupt occurs.  It is the responsibility of the XAPP to 
+    acknowledge this message and process it.  If the XAPP fails to acknowledge
+    5 consecutive messages (meaning 5 interrupts occurred), then future
+    messages are no longer sent to the XAPP."
+   ::= { gpio 16 }
+
+gpioDirection OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is config gpio direction."
+    ::= { gpio 17 }
+
+gpioOutputData OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is set gpio output data."
+    ::= { gpio 18 }
+
+gpioLedStatus OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is set gpio led status."
+    ::= { gpio 19 }
+
+playTuner OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE(1..6))
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+    	"This object specifies the tuner channel to be played on the TNET-HD.
+	The tuner channel is specified as <channel>-<sub-channel>.  If no sub-
+	channel is specified,  1 is assumed.  For example:
+		14
+		14-1"
+    ::= { tuner 1 }
+
+resetDuration OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"This object is used to specified the tuner reset duration in seconds.
+	This is the time period during which the tuner is reset while in use.
+	If this object is set to 0, then the tuner is never reset."
+    ::= { tuner 2 }
+
+channelUp OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"This object is used to switch the tuner channel to the next higher
+	channel."
+    ::= { tuner 3 }
+
+channelDown OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+    	"This object is used to switch the tuner channel to the next lower
+	channel."
+    ::= { tuner 4 }
+
+tunerMode OBJECT-TYPE
+    SYNTAX 	INTEGER { atsc(0), qam64(1), qam256(2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to set or read the tuner mode."
+    ::= { tuner 5 }
+
+tunerScan OBJECT-TYPE
+    SYNTAX 	INTEGER { stop(0), start(1), reset(2) }
+    MAX-ACCESS	read-write
+    STATUS      current
+    DESCRIPTION
+        "This object is used to start or stop the tuner scan. reset(2) will
+	clear the results from a previous scan."
+    ::= { tuner 6 }
+
+channelTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF TunerChannelEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "This table displays the channels that have been detected by a
+	tunerScan.  The subChannelCount lists the number of available 
+	sub-channels for that particular channel."
+    ::= { tuner 7 }
+
+tunerChannelEntry OBJECT-TYPE
+    SYNTAX     TunerChannelEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+            "An entry (conceptual row) in the channelEntry."
+    INDEX      { channelIndex }
+    ::= { channelTable 1 }
+
+TunerChannelEntry ::= SEQUENCE {
+    channelIndex     INTEGER,
+    channelNumber     INTEGER,
+    subChannelCount   INTEGER,
+    subChannelNumber  OCTET STRING
+}
+
+channelIndex OBJECT-TYPE
+    SYNTAX     INTEGER (0..2147483647)
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The auxiliary variable used for identifying instances
+        of the columnar objects in the channelTable."
+    ::= { tunerChannelEntry 1 }
+
+channelNumber OBJECT-TYPE
+    SYNTAX     INTEGER (0..256)
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+	"The detected channel number."
+    ::= { tunerChannelEntry 2 }
+
+subChannelCount OBJECT-TYPE
+    SYNTAX     INTEGER (0..16)
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The number of sub-channels supported by the channel." 
+    ::= { tunerChannelEntry 3 }
+
+subChannelNumber OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (128))
+    MAX-ACCESS	read-only
+    STATUS      current
+    DESCRIPTION
+        "The list of program IDs supported by the channel." 
+    ::= { tunerChannelEntry 4 }
+
+tunerChannelStrength OBJECT-TYPE
+    SYNTAX      INTEGER { noSignal(0),
+                          veryWeak(1),
+                          weak(2),
+                          moderate(3),
+                          strong(4) ,
+                          veryStrong(5) }
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    	"This object is used to return the signal strength of the tuner
+	channel currently being played."
+    ::= { tuner 8 }
+
+forceTxMode OBJECT-TYPE
+    SYNTAX     INTEGER { disabled(0), enabled(1) }
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "A media player with a tuner can be configured as a transmitter (TX)
+	only unit.  This means that the media player can only be used to
+	stream data encoded from the tuner input.  Enabling this object will
+	change tnetVersion object to reflect that the media player has been
+	configured as a TX-only unit.  This setting will take effect after a
+	reboot."
+    ::= { tuner 9 }
+
+tunerChannelMode OBJECT-TYPE
+    SYNTAX     INTEGER { fixedATSCtable(1), fixedQAMtable(2), fixedQAM256table(3), ScannedTable(4) }
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "tuner channel mode."
+    ::= { tuner 10 }
+
+END

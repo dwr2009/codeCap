@@ -1,0 +1,57 @@
+WORK_DIR := $(shell pwd)
+
+DISABLE_WARNINGS := 1
+USE_STD_LIB := 1
+TARGET_TYPE := SHARED_LIBRARY
+TARGET = libDMDTuner.so
+SRC = MN_DMD_common.c \
+	MN88436_autoctrl.c \
+	MN88436_regset.c \
+	MN_DMD_console.c \
+	MN_DMD_device.c \
+	MN_DMD_driver.c \
+	MN_I2C.c \
+	MN_TCB.c \
+	MN_Tuner.c \
+	MxL603_Main.c \
+	MxL603_OEM_Drv.c \
+	MxL603_TunerApi.c \
+	MxL603_TunerCfg.c \
+	../baseIfce/CBaseTunerIface.cpp \
+	CMxl603TunerIface.cpp
+
+RMCFLAGS += -fPIC
+
+RMCFLAGS +=     \
+        -DWITH_MONO=1 \
+        -D_FILE_OFFSET_BITS=64 \
+        -DALLOW_OS_CODE \
+        -D_REENTRANT \
+        -DRMVDEMUX_LOCAL_RMOBJECT=1 \
+        -I. -I$(RUA_DIR)
+
+ifeq '$(findstring "-ggdb",$(RMCFLAGS))' ''
+    RMCFLAGS += -ggdb
+endif
+ifeq '$(findstring "-ggdb",$(LDFLAGS))' ''
+    LDFLAGS += -ggdb
+endif
+
+# Find the path of libLinuxBaseLib
+LINUXBASELIB_DIR := "$(WORK_DIR)/../../LinuxBaseLib"
+LINUXBASELIB_DIR_EXIST = $(shell test -d "$(LINUXBASELIB_DIR)";if [ $$? -eq 0 ]; then echo 1; else echo 0; fi)
+#$(warning LINUXBASELIB_DIR_EXIST=$(LINUXBASELIB_DIR_EXIST))
+ifeq ($(LINUXBASELIB_DIR_EXIST),1)
+    ifeq '$(findstring "-I$(LINUXBASELIB_DIR)/Include",$(RMCFLAGS))' ''
+        RMCFLAGS += -I$(LINUXBASELIB_DIR)/Include
+    endif
+	ifeq '$(findstring " -L$(LINUXBASELIB_DIR)/Out",$(LDFLAGS))' ''
+		LDFLAGS += -L$(LINUXBASELIB_DIR)/Out
+	endif
+	ifeq '$(findstring " -lLinuxBaseLib",$(LDFLAGS))' ''
+		LDFLAGS += -lLinuxBaseLib
+	endif
+else
+	$(error Not found the directory LinuxBaseLib)
+endif
+

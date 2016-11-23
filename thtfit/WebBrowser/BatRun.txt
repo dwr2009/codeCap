@@ -1,0 +1,44 @@
+ 【gdbserver调试】
+/Dbg/gdbserver :999 --attach 2156
+/Dbg/gdbserver :999 ./WebBrowser
+./cs_rootfs_1.2.19/package/gdb_host/gdb-7.3.1/gdb/gdb
+./cs_rootfs_1.2.19/package/gdb_host/gdb-7.5.1/gdb/gdb
+symbol-file WebBrowser/WebBrowser
+symbol-file QTServer/QTServer
+directory /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib
+directory /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+directory qt-4.7.4-2011.11.11/lib
+directory mrua_SMP8654F_3_11_2_dev.mips/lib
+directory cs_rootfs_1.2.19/root/lib
+directory WebBrowser
+directory QtExt
+directory qt/plugins/bearer
+directory SysBaseSrv
+directory tslib
+directory libGlobalStatus
+directory libMp7xxCommon
+path /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib
+path /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+path qt-4.7.4-2011.11.11/lib
+path mrua_SMP8654F_3_11_2_dev.mips/lib
+path cs_rootfs_1.2.19/root/lib
+path WebBrowser
+path QtExt
+path qt/plugins/bearer
+path SysBaseSrv
+path tslib
+path libGlobalStatus
+path libMp7xxCommon
+set solib-absolute-prefix cs_rootfs_1.2.19/build_mipsel/root
+set solib-search-path qt-4.7.4-2011.11.11/plugins/gfxdrivers:snmp++/lib:libMp7xxCommon/Out/Obj:libGlobalStatus/Out/Obj:MruaDevSdk:SysBaseSrv/Out/Obj:DBusAdvancedIf/Out/Obj:GpioBtnInput:DomCodecAccess/Out/Obj:MediaPlayer:DomCodecAccess:DBusAdvancedIf:QtExt:dbus/dbus/.libs:LinuxBaseLib/Out/Obj:cs_rootfs_1.2.19/build_mipsel/root/lib:mrua_SMP8654F_3_11_2_dev.mips/lib:qt-4.7.4-2011.11.11/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib:dcchd_SMP865x_3_11_0_black.mips/dcchd/dtv/tuner:dcchd_SMP865x_3_11_0_black.mips/dcchd/dtv/acap:dcchd_SMP865x_3_11_0_black.mips/dcchd/dtv/network:dcchd_SMP865x_3_11_0_black.mips/dcchd/dtv/capture:dcchd_SMP865x_3_11_0_black.mips/dcchd/dtv:dcchd_SMP865x_3_11_0_black.mips/dcchd/mono:dcchd_SMP865x_3_11_0_black.mips/dcchd/core:dcchd_SMP865x_3_11_0_black.mips/dcchd/dcchd:dcchd_SMP865x_3_11_0_black.mips/directfb/lib:tslib/plugins/.libs:tslib/Out/lib:SysBaseSrv/Out/Obj:WebBrowser:qt/plugins/imageformats:qt/plugins/bearer:QtExt:dbus/dbus/.libs:LinuxBaseLib/Out/Obj:cs_rootfs_1.2.19/build_mipsel/root/lib:mrua_SMP8654F_3_11_2_dev.mips/lib:qt-4.7.4-2011.11.11/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+target remote 192.168.10.61:999
+
+//Target
+chmod a+rw /Temp/CoreDump.WebBrowser
+target core /sdb1/xrq/nfs/SMP867X_Linux/root/Temp/CoreDump.WebBrowser
+
+[gdb分析core dump]
+//搜索堆栈调用函数地址，w--4字节一次，a--参数是地址
+x /1000aw $sp
+
+ 

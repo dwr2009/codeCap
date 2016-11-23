@@ -1,0 +1,38 @@
+ ¡¾gdbserverµ÷ÊÔ¡¿
+/Dbg/gdbserver :999 --attach 2316
+/Dbg/gdbserver :999 ./MediaPlayer
+/Dbg/gdbserver :999 /usr/local/sbin/snmpd -c /etc/snmp/snmpd.conf -f -Le -Ddbus -Dmedia
+/Dbg/gdbserver :999 /mrua_3.11.0/bin/example_outports -digital -f HDMI_720p50 -analog -audio_engine 0
+/Dbg/gdbserver :999 /mrua_3.11.0/bin/test_rmfp -o hdmi -f HDMI_720p50 -o cvbs -audio_engine 0 /MP7XX/LocalMedia/Picture/ZhuZi.jpg
+/Dbg/gdbserver :999 /mrua_3.11.0/bin/test_rmfp -oscaler vcr /Dbg/Osd.bmp
+./cs_rootfs_1.2.19/package/gdb_host/gdb-7.3.1/gdb/gdb
+test_rmfp -no_disp -oscaler vcr /Dbg/Osd.bmp 
+symbol-file net-snmp/agent/.libs/snmpd
+symbol-file mrua_SMP8654F_3_11_0_dev.mips/bin/example_outports
+symbol-file mrua_SMP8654F_3_11_0_dev.mips/bin/test_rmfp
+directory /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib
+directory /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+directory qt-4.7.4-2011.11.11/lib
+directory mrua_SMP8654F_3_11_0_dev.mips/lib
+directory cs_rootfs_1.2.19/root/lib
+directory WebBrowser
+directory QtExt
+directory DBusAdvancedIf
+directory DomCodecAccess
+directory SnmpAgent
+directory SnmpAgent/data_access
+path /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib
+path /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+path qt-4.7.4-2011.11.11/lib
+path mrua_SMP8654F_3_11_0_dev.mips/lib
+path cs_rootfs_1.2.19/root/lib
+path WebBrowser
+path QtExt
+path DBusAdvancedIf
+path DomCodecAccess
+path SnmpAgent
+path SnmpAgent/data_access
+set solib-absolute-prefix cs_rootfs_1.2.19/build_mipsel/root/lib
+set solib-search-path SnmpAgent/data_access:SnmpAgent:DomCodecAccess:DBusAdvancedIf:QtExt:dbus/dbus/.libs:LinuxBaseLib/Out/Obj:cs_rootfs_1.2.19/build_mipsel/root/lib:mrua_SMP8654F_3_11_0_dev.mips/lib:qt-4.7.4-2011.11.11/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+target remote 192.168.10.93:999
+target remote 192.168.0.12:999

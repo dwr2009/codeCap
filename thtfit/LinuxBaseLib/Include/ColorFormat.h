@@ -1,0 +1,10 @@
+#ifndef	_COLOR_FORMAT_H_
+#define	_COLOR_FORMAT_H_
+
+typedef enum
+{
+	COLOR_FMT_UNKNOWN,
+	COLOR_FMT_32BPP_ARGB = 1,	//ARGB, MSB first
+}COLOR_FORMAT_TYPE, *P_COLOR_FORMAT_TYPE;
+
+#endif	//_COLOR_FORMAT_H_

@@ -1,0 +1,15 @@
+*.SearchResults
+GitMsg.txt
+*.[oad]
+*.so
+*.WK3
+*.IAB
+*.IAD
+*.IMB
+*.IMD
+*.PFI
+*.PR
+*.PO
+*.PRI
+*.PS
+

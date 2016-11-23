@@ -1,0 +1,2237 @@
+#include "NexusExtApi.h"
+#include <nxclient.h>
+#include <string.h>
+#include <ErrPrintHelper.h>
+#include "media_player.h"
+#include "media_volume.h"
+#include "NexusExt.h"
+#include "display.h"
+#include "SysBaseSrvApi.h"
+#include <nexus_i2c.h>
+#include "nexus_platform.h"
+#include <SnmpCmdConv.h>
+#include "CRtcInterface.h"
+#include "CRtcIsl1208Device.h"
+#include "CNexusI2cBus.h"
+#include "nexus_cec.h"
+#include <DateTime.h>
+#include <ProcessRunningInfo.h>
+#include<stdlib.h>
+#include <time.h>
+#include <SharedPtr.h>
+#include "AutoScopeLock.h"
+
+#define	BI2C_ERR_NO_ACK				0x00110001
+
+CNexusExt * CNexusExtImpl_new()
+{
+	return (new CNexusExtImpl);
+}
+
+CNexusExtImpl::CNexusExtImpl()
+{
+	INT_t iRet;
+	
+	m_pMediaPlayer = NULL;
+	m_eNexusDispAspectRatio = NEXUS_DisplayAspectRatio_eAuto;
+	m_bFullVideo = false;
+
+	iRet = CreateMediaPlayer();
+	if(ERR_SUCCESS != iRet)
+	{
+		PRINT_BFILE_LINENO_IRET_STR;
+	}
+	
+	posSetting.scalerPosSettings.uLeft = 0;
+	posSetting.scalerPosSettings.uTop = 0;
+	posSetting.scalerPosSettings.uWidth = 4096;
+	posSetting.scalerPosSettings.uHeight = 4096;
+
+#ifdef ENABLE_DTV
+	m_bTunerOpenSucc = FALSE;
+	m_TunerSrv_sp = SharedPtr <CTunerSrv> (new CTunerSrv(m_pMediaPlayer));
+	if(m_TunerSrv_sp.isNull())
+	{
+		PRINT_BFILE_LINENO_IRET_STR;
+	}
+
+	iRet=m_TunerSrv_sp->InitInstance();
+	if(ERR_SUCCESS !=iRet )
+	{
+		PRINT_BFILE_LINENO_IRET_STR;
+	}
+#endif
+
+}
+
+CNexusExtImpl::~CNexusExtImpl()
+{
+	media_player_t pMediaPlayer = (typeof(pMediaPlayer))m_pMediaPlayer;
+	
+	if(pMediaPlayer)
+	{
+		media_player_stop(pMediaPlayer);
+		media_player_destroy(pMediaPlayer);
+		pMediaPlayer = NULL;
+		m_pMediaPlayer = NULL;
+	}
+
+#ifdef ENABLE_DTV
+	m_TunerSrv_sp.Clear();
+#endif	
+
+}
+
+INT_t CNexusExtImpl::setEventListener(WeakPtr <CNexusExt::CEventListener> evtListener_wp)
+{	
+	INT_t iOutRet = ERR_SUCCESS;
+
+	m_EvtListener_wp = evtListener_wp;
+
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::NexusExt_NxClient_Join(LPCSTR pszClientName/* = NULL*/)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NxClient_JoinSettings oNxJoinSettings;
+	NEXUS_Error nexusErr;
+
+	NxClient_GetDefaultJoinSettings(&oNxJoinSettings);
+	if(NULL != pszClientName)
+	{
+		snprintf(oNxJoinSettings.name, sizeof(oNxJoinSettings.name), "%s", pszClientName);
+		oNxJoinSettings.name[sizeof(oNxJoinSettings.name)-1] = '\0';
+	}
+	oNxJoinSettings.tunnelCapable = FALSE;
+	oNxJoinSettings.timeout = 0;
+	oNxJoinSettings.session = 0;
+
+	UINT64_t uSysUpTimeMs, uSysUpStartTimeMs;
+	uSysUpStartTimeMs = GetSysUpTimeMs();
+RETRY_NX_JOIN:
+	nexusErr = NxClient_Join(&oNxJoinSettings);
+	if(NEXUS_SUCCESS != nexusErr)
+	{
+		uSysUpTimeMs = GetSysUpTimeMs();
+		if((5*1000) > (uSysUpTimeMs - uSysUpStartTimeMs))
+		{
+			if(TRUE == NxserverIsRunning())
+			{
+				//LOG_BLINE("nxserver is running, retry.\n");
+				sleep(1);
+				goto RETRY_NX_JOIN;
+			}
+		}
+		LOG_BLINE("nexusErr=%d\n", nexusErr);
+		iOutRet = ERR_NxClientJoin_FAILED;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::NexusExt_NxClient_Uninit()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+
+	NxClient_Uninit();
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::Play(CONST LPCSTR pszUrl, CONST BOOL_t bLoopMode/* = FALSE*/)
+{
+	INT_t iOutRet = ERR_SUCCESS, iRet;
+	media_player_start_settings mediaPlayerStartSettings;
+	media_player_t pMediaPlayer = NULL;
+
+	iRet = CreateMediaPlayer();
+	if(ERR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	pMediaPlayer = (typeof(pMediaPlayer))m_pMediaPlayer;
+	media_player_get_default_start_settings(&mediaPlayerStartSettings);
+	mediaPlayerStartSettings.videoWindowType = NxClient_VideoWindowType_eMain;	/* full screen capable */
+	mediaPlayerStartSettings.loop = bLoopMode;
+	mediaPlayerStartSettings.eof = pfnOnEndOfStreamCb;
+	mediaPlayerStartSettings.pfnVidDecStreamChangedCb = vidDecStreamChangedCb;
+	mediaPlayerStartSettings.context = this;
+	mediaPlayerStartSettings.stream_url = pszUrl;
+	iRet = media_player_start(pMediaPlayer, &mediaPlayerStartSettings);
+	if(0 != iRet)
+	{
+		iOutRet = ERR_MediaPlayer_StartFail;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::SwitchToPlay()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+	
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	if(NEXUS_PlaybackState_ePlaying == oPlaybackStatus.state)	//already OK
+	{
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_trick(m_pMediaPlayer, NEXUS_NORMAL_DECODE_RATE);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_Trick_Err;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::SwitchToPause()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	if(NEXUS_PlaybackState_ePaused == oPlaybackStatus.state)	//already OK
+	{
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_trick(m_pMediaPlayer, 0/*pause*/);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_Trick_Err;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::SwitchToFastForward()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_trick(m_pMediaPlayer, 8*NEXUS_NORMAL_DECODE_RATE);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_Trick_Err;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::SwitchToRewind()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_trick(m_pMediaPlayer, -8*NEXUS_NORMAL_DECODE_RATE);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_Trick_Err;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::getPlayMode(OUT MediaPlayer::PlayMode & ePlayMode)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	if(NEXUS_PlaybackState_ePaused == oPlaybackStatus.state)
+	{
+		ePlayMode = PlayMode_Pause;
+	}
+	else if(NEXUS_PlaybackState_eStopped == oPlaybackStatus.state)
+	{
+		ePlayMode = PlayMode_Stopped;
+	}
+	else if(NEXUS_PlaybackState_eTrickMode == oPlaybackStatus.state)
+	{
+		if(NEXUS_NORMAL_DECODE_RATE < oPlaybackStatus.trickModeSettings.rate)
+		{
+			ePlayMode = PlayMode_FastForward;
+		}
+		else if(0 > oPlaybackStatus.trickModeSettings.rate)
+		{
+			ePlayMode = PlayMode_Rewind;
+		}
+		else if(0 == oPlaybackStatus.trickModeSettings.rate)
+		{
+			ePlayMode = PlayMode_Pause;
+		}
+	}
+	else
+	{
+		ePlayMode = PlayMode_Normal;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::getCurrentTime(OUT ULONG & uTimestamp)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	uTimestamp = oPlaybackStatus.position;
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::getLastTime(OUT ULONG & uTimestamp)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	uTimestamp = oPlaybackStatus.last;
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+
+INT_t CNexusExtImpl::setSyncTime(const LONG & Offset)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+
+	iNexusErr = media_player_get_playback_status(m_pMediaPlayer, &oPlaybackStatus);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_Player_GetStatus_Err;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_trick(m_pMediaPlayer, NEXUS_NORMAL_DECODE_RATE + Offset);
+
+	//iNexusErr = media_player_seek(m_pMediaPlayer,-Offset,SEEK_CUR);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_setSyncTime_Err;
+		goto EXIT_PROC;
+	}
+
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setSyncSeek(const LONG & Offset)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_seek(m_pMediaPlayer,-Offset,SEEK_CUR);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_setSyncTime_Err;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::Seek(const unsigned int & Offset)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr;
+	NEXUS_PlaybackStatus oPlaybackStatus;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = media_player_seek(m_pMediaPlayer,Offset,SEEK_CUR);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_Nexus_setSyncTime_Err;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+
+INT_t CNexusExtImpl::StopPlayback()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	media_player_t pMediaPlayer = (typeof(pMediaPlayer))m_pMediaPlayer;
+
+	if(m_pMediaPlayer)
+	{
+		media_player_stop(pMediaPlayer);
+	}
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::ChangeVolume(int VolumePercentToChange)
+{
+	
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	CAudioVolumeExt ChAudioVolume;
+	CHANGE_VOLUME_DIRECTION chvoldir;
+
+	do
+	{
+		iRet = getVolumeLevel(ChAudioVolume);
+		if(iRet)
+		{
+			iOutRet = ERR_MediaPlayer_GetVolumeFail;
+			break;
+		}
+		
+		if(0 > VolumePercentToChange)
+		{
+			VolumePercentToChange = 0;
+		}
+		else if(100 < VolumePercentToChange)
+		{
+			VolumePercentToChange = 100;
+		}
+
+		if(0 > VolumePercentToChange)
+		{
+			VolumePercentToChange = 0;
+		}
+		else if(100 < VolumePercentToChange)
+		{
+			VolumePercentToChange = 100;
+		}
+
+		ChAudioVolume.m_left = getVolValFromPercent(VolumePercentToChange);
+		ChAudioVolume.m_right = getVolValFromPercent(VolumePercentToChange);
+
+		iRet = setVolumeLevel(ChAudioVolume);
+		if(iRet)
+		{
+			iOutRet = ERR_MediaPlayer_SetVolumeFail;
+			break;
+		}
+	}while(FALSE);
+
+#if 0
+		LOG_BLINE("VolumePercentToChange = %d\n",VolumePercentToChange);
+		LOG_BLINE("left vol = %d\n",ChAudioVolume.m_left);
+		LOG_BLINE("right vol = %d\n",ChAudioVolume.m_right);
+#endif
+
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::ChangeVideoOutputMode(VIDEO_OUTPUT_MODE eVoMode, 
+	VIDEO_OUTPUT_MODE * peNewVoMode/* = NULL*/,VIDEO_OUTPUT_MODE * peOldVoMode/* = NULL*/)
+{
+    INT_t iOutRet = ERR_SUCCESS, iRet;
+    NEXUS_VideoFormat nexusVidFmt;
+    VIDEO_OUTPUT_MODE vidOutMode = VO_MODE_NotSet;
+
+	//LOG_BLINE("eVoMode=%d\n", eVoMode);
+
+	nexusVidFmt = getCurNexusDispVidFmt();	//NEXUS_Format
+	//Nexus_Format => VIDEO_OUTPUT_MODE
+	iRet = NexusVidFmt_to_VidOutMode(IN nexusVidFmt, OUT &vidOutMode);
+    if(iRet != ERR_SUCCESS)
+    {
+		if(ERR_NOT_FOUND == iRet)
+		{
+			PRINT_BFILE_LINENO_BUG_STR;
+		}
+		else	//other errs
+		{
+	    	iOutRet = iRet;
+	    	goto EXIT_PROC;
+		}
+    }
+
+	if(peOldVoMode)
+	{
+		*peOldVoMode = vidOutMode;
+	}
+	
+	if(peNewVoMode)
+	{
+		*peNewVoMode = vidOutMode;
+	}
+
+    if(eVoMode == VO_MODE_NotSet)
+    {
+		goto EXIT_PROC;
+    }
+
+    iRet = VidOutMode_to_NexusVidFmt(IN eVoMode, OUT &nexusVidFmt);
+    if(iRet != ERR_SUCCESS)
+    {
+    	iOutRet=iRet;
+    	goto EXIT_PROC;
+    }
+	//LOG_BLINE("eVoMode=%d,nexusVidFmt=%d\n", eVoMode, nexusVidFmt);
+
+#if 1 /*Add by xuweiwei 2014-8-6 for Save Video Output Mode Value*/
+	if(nexusVidFmt <= NEXUS_VideoFormat_eUnknown || nexusVidFmt >= NEXUS_VideoFormat_eMax)
+	{
+        iOutRet = ERROR_NOT_SUPPORTED;
+        goto EXIT_PROC;
+    }
+
+	if(peNewVoMode)
+	{
+		*peNewVoMode = eVoMode;
+	}
+	
+	iRet = SysProp_setPersistent("VideoOutputMode", nexusVidFmt);
+	if(ERR_SUCCESS != iRet)
+	{
+		PRINT_BFILE_LINENO_IRET_STR;
+	}
+#endif
+
+    iRet = ChangeVidOutputMode(nexusVidFmt);
+    if(iRet != ERR_SUCCESS)
+    {
+    	PRINT_BFILE_LINENO_IRET_STR;
+    }
+
+EXIT_PROC:
+
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::CreateMediaPlayer()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	
+	if(NULL == m_pMediaPlayer)
+	{
+		media_player_create_settings mediaPlayerCreateSettings;
+		media_player_get_default_create_settings(&mediaPlayerCreateSettings);
+		mediaPlayerCreateSettings.decodeVideo = TRUE;
+		mediaPlayerCreateSettings.decodeAudio = TRUE;
+		mediaPlayerCreateSettings.dtcpEnabled = FALSE;
+		mediaPlayerCreateSettings.maxWidth = 4096;
+		mediaPlayerCreateSettings.maxHeight = 2160;
+		m_pMediaPlayer = media_player_create(&mediaPlayerCreateSettings);
+		if(NULL == m_pMediaPlayer)
+		{
+			iOutRet = ERR_MediaPlayer_CreateFail;
+			goto EXIT_PROC;
+		}
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setVideoPosition(int x, int y, int w, int h)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_Error iNexusErr = NEXUS_SUCCESS;
+	media_player_t pMediaPlayer = (typeof(pMediaPlayer))m_pMediaPlayer;
+
+	if(NULL == pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+
+	iNexusErr = MediaPlayer_setVidPos(pMediaPlayer, x, y, w, h);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_FAILED;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+VOID CNexusExtImpl::pfnOnEndOfStreamCb(void * pContext)
+{
+	CNexusExtImpl * pNexusExt = (typeof(pNexusExt))pContext;
+
+	if(NULL == pNexusExt)
+	{
+		LOG_BLINE("BUG,pContext is NULL.\n");
+		goto EXIT_PROC;
+	}
+	pNexusExt->OnEndOfStream();
+
+EXIT_PROC:
+	;
+}
+
+VOID CNexusExtImpl::OnEndOfStream()
+{
+	//LOG_BLINE("CNexusExt::OnEndOfStream\n");
+	SharedPtr <CEventListener> evtListener_sp = m_EvtListener_wp.Promote();
+	if(evtListener_sp.isNull())
+	{
+		goto EXIT_PROC;
+	}
+	evtListener_sp->OnEndOfStream();
+EXIT_PROC:
+	;
+}
+
+VOID CNexusExtImpl::vidDecStreamChangedCb(void * pCtx)
+{
+	CNexusExtImpl * pNexusExt = (typeof(pNexusExt))pCtx;
+
+	if(CC_UNLIKELY(NULL == pNexusExt))
+	{
+		LOG_BLINE("BUG,pContext is NULL.\n");
+		goto EXIT_PROC;
+	}
+	pNexusExt->onVidDecStreamChanged();
+
+EXIT_PROC:
+	;
+}
+
+VOID CNexusExtImpl::onVidDecStreamChanged()
+{
+	SharedPtr <CEventListener> evtListener_sp = m_EvtListener_wp.Promote();
+	if(evtListener_sp.isNull())
+	{
+		goto EXIT_PROC;
+	}
+	evtListener_sp->onVidDecStreamChanged();
+EXIT_PROC:
+	;
+}
+
+INT_t CNexusExtImpl::scanI2cDev()
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	int iId;
+	NEXUS_Error nexusErr;
+	NEXUS_I2cSettings nexusI2cSettings;
+
+	NEXUS_I2c_GetDefaultSettings(&nexusI2cSettings);
+	nexusI2cSettings.clockRate = NEXUS_I2cClockRate_e100Khz;
+	nexusI2cSettings.interruptMode = true;
+	nexusI2cSettings.burstMode = false;
+	nexusI2cSettings.timeout = 0;	//use defalt
+	nexusI2cSettings.softI2c = false;
+	nexusI2cSettings.fourByteXferMode = false;
+	nexusI2cSettings.use5v = false;
+	for(iId=0; iId<NEXUS_NUM_I2C_CHANNELS; iId++)
+	{
+		NEXUS_I2cHandle nexusI2cHandle = NEXUS_I2c_Open(iId, &nexusI2cSettings);
+		BYTE i2cSlaveAddr;
+		if(NULL == nexusI2cHandle)
+		{
+			LOG_BLINE("OpenI2cCh %d failed\n", iId);
+			goto ONE_I2C_CH_SCAN_FINISH;
+		}
+		for(i2cSlaveAddr = 0x00; i2cSlaveAddr <= 0x7F; i2cSlaveAddr++)
+		{
+			BYTE byteRead;
+			nexusErr = NEXUS_I2c_Read(nexusI2cHandle, i2cSlaveAddr, 0, &byteRead, 1);
+			if(NEXUS_SUCCESS == nexusErr)
+			{
+				LOG("Found i2c dev(unshift) on ch%d: 0x%02x\n", iId, i2cSlaveAddr);
+			}
+			else
+			{
+				if(BI2C_ERR_NO_ACK == nexusErr)
+				{
+				}
+				else if(NEXUS_NOT_INITIALIZED == nexusErr)
+				{
+					LOG_BLINE("err 0x%08x(NEXUS_NOT_INITIALIZED),ch=%d\n", nexusErr, iId);
+				}
+				else
+				{
+					LOG_BLINE("I2cRead err 0x%08x,ch=%d\n", nexusErr, iId);
+				}
+			}
+		}
+ONE_I2C_CH_SCAN_FINISH:
+		if(nexusI2cHandle)
+		{
+			NEXUS_I2c_Close(nexusI2cHandle);
+			nexusI2cHandle = NULL;
+		}
+	}
+
+	/*
+	//power on the tuner on thtfit 7445c0 board
+	iRet = setGpioOutputVal(58, 1);
+	if(ERR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	*/
+#if	0	//nexus not implemented
+	//soft i2c for tuner on moca i2c bus
+	{
+		NEXUS_GpioHandle hGpioClk = NULL;
+		NEXUS_GpioHandle hGpioData = NULL;
+		NEXUS_GpioSettings gpioSettings;
+		NEXUS_I2cHandle nexusI2cHandle = NULL;
+		BYTE i2cSlaveAddr;
+	
+		NEXUS_Gpio_GetDefaultSettings(NEXUS_GpioType_eSpecial, &gpioSettings);
+		gpioSettings.mode = NEXUS_GpioMode_eOutputOpenDrain/*NEXUS_GpioMode_eOutputPushPull*/;
+		gpioSettings.value = NEXUS_GpioValue_eHigh;
+		gpioSettings.interruptMode = NEXUS_GpioInterrupt_eDisabled;
+		gpioSettings.interrupt.callback = NULL;
+		gpioSettings.interrupt.context = NULL;
+		gpioSettings.interrupt.param = NULL;
+		gpioSettings.maskEdgeInterrupts = FALSE;
+
+		hGpioClk = NEXUS_Gpio_Open(NEXUS_GpioType_eSpecial, 4, &gpioSettings);
+		if(NULL == hGpioClk)
+		{
+			iOutRet = ERR_OpenNexusGpio_FAIL;
+			goto DETECT_MOCA_I2C_END;
+		}
+		hGpioData = NEXUS_Gpio_Open(NEXUS_GpioType_eSpecial, 5, &gpioSettings);
+		if(NULL == hGpioClk)
+		{
+			iOutRet = ERR_OpenNexusGpio_FAIL;
+			goto DETECT_MOCA_I2C_END;
+		}
+		//goto DETECT_MOCA_I2C_END;
+		
+		nexusI2cSettings.clockRate = NEXUS_I2cClockRate_e100Khz;
+		nexusI2cSettings.interruptMode = true;
+		nexusI2cSettings.burstMode = false;
+		nexusI2cSettings.timeout = 0;	//use defalt
+		nexusI2cSettings.softI2c = true;
+		nexusI2cSettings.clockGpio = hGpioClk;
+		nexusI2cSettings.dataGpio = hGpioData;
+		nexusI2cSettings.fourByteXferMode = false;
+		nexusI2cSettings.use5v = false;
+
+		nexusI2cHandle = NEXUS_I2c_Open(0, &nexusI2cSettings);
+		if(NULL == nexusI2cHandle)
+		{
+			LOG_BLINE("OpenMocaI2c failed\n");
+			goto DETECT_MOCA_I2C_END;
+		}
+		for(i2cSlaveAddr = 0x00; i2cSlaveAddr <= 0x7F; i2cSlaveAddr++)
+		{
+			BYTE byteRead;
+			nexusErr = NEXUS_I2c_Read(nexusI2cHandle, i2cSlaveAddr, 0, &byteRead, 1);
+			if(NEXUS_SUCCESS == nexusErr)
+			{
+				LOG("Found i2c dev(unshift) on MocaI2c: 0x%02x\n", i2cSlaveAddr);
+			}
+			else
+			{
+				if(BI2C_ERR_NO_ACK == nexusErr)
+				{
+				}
+				else
+				{
+					LOG_BLINE("I2cRead err 0x%08x,ch=%d\n", nexusErr, iId);
+				}
+			}
+		}
+DETECT_MOCA_I2C_END:
+		if(nexusI2cHandle)
+		{
+			NEXUS_I2c_Close(nexusI2cHandle);
+			nexusI2cHandle = NULL;
+		}
+		if(hGpioData)
+		{
+			NEXUS_Gpio_Close(hGpioData);
+			hGpioData = NULL;
+		}
+		if(hGpioClk)
+		{
+			NEXUS_Gpio_Close(hGpioClk);
+			hGpioClk = NULL;
+		}
+	}
+#endif
+
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setGpioOutputVal(const int iGpioNum, const bool bVal)
+{
+	INT_t iOutRet = ERR_SUCCESS;
+	NEXUS_GpioHandle hGpio = NULL;
+	NEXUS_GpioSettings gpioSettings;
+	
+	NEXUS_Gpio_GetDefaultSettings(NEXUS_GpioType_eStandard, &gpioSettings);
+	gpioSettings.mode = NEXUS_GpioMode_eOutputPushPull;
+	gpioSettings.value = (true==bVal?NEXUS_GpioValue_eHigh:NEXUS_GpioValue_eLow);
+	gpioSettings.interruptMode = NEXUS_GpioInterrupt_eDisabled;
+	gpioSettings.interrupt.callback = NULL;
+	gpioSettings.interrupt.context = NULL;
+	gpioSettings.interrupt.param = 0;
+	gpioSettings.maskEdgeInterrupts = FALSE;
+	hGpio = NEXUS_Gpio_Open(NEXUS_GpioType_eStandard, iGpioNum, &gpioSettings);
+	if(NULL == hGpio)
+	{
+		iOutRet = ERR_OpenNexusGpio_FAIL;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:
+	if(hGpio)
+	{
+		NEXUS_Gpio_Close(hGpio);
+		hGpio = NULL;
+	}
+	return iOutRet;
+}
+
+#if 1 /*Add by xuweiwei 2014-9-9*/
+INT_t CNexusExtImpl::setStereoscopic3DFormat(int* pStereoscopic3D/* = NULL*/)
+{
+	INT_t iOutRet = ERR_SUCCESS, iRet;
+	NxClient_DisplaySettings displaySettings;
+	NxClient_GetDisplaySettings(&displaySettings);
+
+	do
+	{
+		if(pStereoscopic3D == NULL)
+		{
+			displaySettings.display3DSettings.orientation = NEXUS_VideoOrientation_e2D;
+			break;
+		}
+		
+		NEXUS_VideoOrientation inStereoscopic3DValue=(NEXUS_VideoOrientation)(*pStereoscopic3D);
+		
+		if(NEXUS_VideoOrientation_eMax<=inStereoscopic3DValue || NEXUS_VideoOrientation_e2D > inStereoscopic3DValue )
+		{
+			iOutRet = ERROR_INVALID_PARAMETER;
+			goto EXIT_PROC;
+		}
+
+		if(NEXUS_VideoOrientation_e3D_LeftRight == inStereoscopic3DValue)
+		{
+			displaySettings.display3DSettings.orientation = NEXUS_VideoOrientation_e3D_LeftRight;
+		}
+		else if(NEXUS_VideoOrientation_e3D_OverUnder == inStereoscopic3DValue)
+		{
+			displaySettings.display3DSettings.orientation = NEXUS_VideoOrientation_e3D_OverUnder;
+		}
+		else
+		{
+			displaySettings.display3DSettings.orientation = NEXUS_VideoOrientation_e2D;
+		}
+	}while(false);
+
+	iRet=NxClient_SetDisplaySettings(&displaySettings);
+	if(0 != iRet)
+	{
+		iOutRet = ERR_FAILED;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+#endif
+
+INT_t CNexusExtImpl::setVidWinAspectRatio(IN DISPLAY_ASPECT_RATIO eDispAspectRatio)
+{
+	INT_t iOutRet = ERR_SUCCESS;	
+	NEXUS_Error nexusErr;
+
+	if(DispAspectRatio_DEFAULT == eDispAspectRatio)
+	{
+		m_bFullVideo = true;
+	}
+	else if(DispAspectRatio_4_3 == eDispAspectRatio)
+	{
+		m_bFullVideo = false;
+		m_eNexusDispAspectRatio = NEXUS_DisplayAspectRatio_e4x3;
+	}
+	else if(DispAspectRatio_16_9 == eDispAspectRatio)
+	{
+		m_bFullVideo = false;
+		m_eNexusDispAspectRatio = NEXUS_DisplayAspectRatio_e16x9;
+	}
+	else if(DispAspectRatio_FULL == eDispAspectRatio)
+	{
+		m_bFullVideo = true;
+	}
+	else
+	{
+		m_bFullVideo = false;
+		m_eNexusDispAspectRatio = NEXUS_DisplayAspectRatio_eAuto;
+	}
+	{
+		nexusErr = MediaPlayer_setVidWinAspectRatio(m_pMediaPlayer, m_eNexusDispAspectRatio, m_bFullVideo);
+		if(NEXUS_SUCCESS != nexusErr)
+		{
+			iOutRet = ERR_Nexus_setVidWinAspectRatio_Err;
+			goto EXIT_PROC;
+		}
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+#if 1 /*Add by xuweiwei 2014-9-16*/
+INT_t CNexusExtImpl::getMonitorInfo(OUT CString &strMonitorType)
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	DECLARE_CLS_STACK_BUF_STRING(strTmpMonitorType, 128);
+	NEXUS_HdmiOutputBasicEdidData MonitorInfo;	
+	
+	do
+	{
+		iRet=NxClient_GetMonitorInfo(&MonitorInfo);
+		if(iRet!=ERROR_SUCCESS)
+		{
+			iOutRet=iRet;
+			break;
+		}
+		
+		MonitorInfo.monitorName[sizeof(MonitorInfo.monitorName)-1] = '\0';
+		iRet = strTmpMonitorType.Format("%02x%02x,%02x%02x,%s",MonitorInfo.vendorID[0],MonitorInfo.vendorID[1],MonitorInfo.productID[0],MonitorInfo.productID[1],MonitorInfo.monitorName);
+		if(ERROR_SUCCESS != iRet)
+		{
+			iOutRet = iRet;
+			break;
+		}
+		strMonitorType = strTmpMonitorType;
+	}while(FALSE);
+
+	return iOutRet;
+}
+#endif
+
+
+#if 1 /*Add by xuweiwei 2014-9-25*/
+
+INT_t CNexusExtImpl::getDisplayParam(const int iDispParam,OUT int &oValue)
+{
+
+	INT_t iOutRet = ERROR_SUCCESS;
+	NxClient_PictureQualitySettings pqSettings;
+	INT_t iScalerValue = 0;
+	
+	NxClient_GetPictureQualitySettings(&pqSettings);
+
+	switch(iDispParam)
+	{
+	case DispPARAM_Brightness:
+		iScalerValue=pqSettings.graphicsColor.brightness;
+		break;
+	case DispPARAM_Contrast:
+		iScalerValue=pqSettings.graphicsColor.contrast;
+		break;
+	case DispPARAM_Saturation:
+		iScalerValue=pqSettings.graphicsColor.saturation;
+		break;
+	case DispPARAM_Hue:
+		iScalerValue=pqSettings.graphicsColor.hue;
+		break;
+	default:
+		iOutRet = ERROR_INVALID_PARAMETER;
+		break;
+	}
+
+    oValue = (float)100/65535*(iScalerValue+32768)+0.5;
+ 	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setDisplayParam(int iDispParam,int iValue)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	NxClient_PictureQualitySettings pqSettings;
+	INT_t iScalerValue;
+	if(0 > iValue)
+	{
+		iValue = 0;
+	}
+	else if(100 < iValue)
+	{
+		iValue = 100;
+	}
+	
+	NxClient_GetPictureQualitySettings(&pqSettings);
+	iScalerValue = (float)65535/100*iValue-32768;
+	switch(iDispParam)
+	{
+	case DispPARAM_Brightness:
+		pqSettings.graphicsColor.brightness = iScalerValue;
+		break;
+	case DispPARAM_Contrast:
+		pqSettings.graphicsColor.contrast = iScalerValue;
+		break;
+	case DispPARAM_Saturation:
+		pqSettings.graphicsColor.saturation = iScalerValue;
+		break;
+	case DispPARAM_Hue:
+		pqSettings.graphicsColor.hue = iScalerValue;
+		break;
+	default:
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+
+	iRet = NxClient_SetPictureQualitySettings(&pqSettings);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setOutputSpdifMode(int iSpdifMode)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	NxClient_AudioSettings audioSettings;
+	NxClient_GetAudioSettings(&audioSettings);
+
+
+	if(Mp7xxCommon::SnmpOutSpdifMode_Disabled == iSpdifMode)
+	{
+		audioSettings.spdif.outputMode=NxClient_AudioOutputMode_eNone;
+	}
+	else if(Mp7xxCommon::SnmpOutSpdifMode_Compressed == iSpdifMode) 
+	{
+		audioSettings.spdif.outputMode=NxClient_AudioOutputMode_ePassthrough;
+	}
+	else if(Mp7xxCommon::SnmpOutSpdifMode_Uncompressed  == iSpdifMode)
+	{
+		audioSettings.spdif.outputMode=NxClient_AudioOutputMode_ePcm;
+	}
+	else
+	{
+		audioSettings.spdif.outputMode=NxClient_AudioOutputMode_ePcm;
+	}
+
+	iRet = NxClient_SetAudioSettings(&audioSettings);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:	
+	return iOutRet;
+}
+
+#endif
+
+
+#if 1 /*Add by xuweiwei 2014-9-30*/
+INT_t CNexusExtImpl::setHdmiAudioOutput(int bHdmiAudioOutput)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	NxClient_AudioSettings audioSettings;
+	NxClient_GetAudioSettings(&audioSettings);
+	bool iHdmiAudioOutput=(typeof(iHdmiAudioOutput))(bHdmiAudioOutput);
+
+	if(iHdmiAudioOutput)
+	{
+		audioSettings.hdmi.outputMode=NxClient_AudioOutputMode_eAuto;	
+	}
+	else
+	{
+		audioSettings.hdmi.outputMode=NxClient_AudioOutputMode_eNone;
+	}
+
+	iRet = NxClient_SetAudioSettings(&audioSettings);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:	
+	return iOutRet;
+
+}
+
+
+INT_t CNexusExtImpl::setAnalogAudioMute(int bAnalogAudioMute)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	NxClient_AudioSettings audioSettings;
+	NxClient_GetAudioSettings(&audioSettings);
+	bool iAnalogAudioMute=(typeof(iAnalogAudioMute))(bAnalogAudioMute);
+	/*LOG_BLINE("bAnalogAudioMute:%d\n",bAnalogAudioMute);*/
+	audioSettings.dac.muted = bAnalogAudioMute;
+	iRet = NxClient_SetAudioSettings(&audioSettings);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setHwRtcTime(unsigned int iyear,unsigned int imonth,unsigned int imday,unsigned int ihour,unsigned int imin,unsigned int isec, int izone)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	CNexusI2cBus *pNexusI2cBus=NULL;
+	CRtcIsl1208Device *pRtcIsl1208Device=NULL;
+	int iI2cBus=DEFAULT_RTC_I2C_BUS_ID;
+	struct tm tmUtcTimeToSet;
+	time_t timeToSetSystem;
+
+	static int CurrentZone = 0; 
+	
+	#if 0
+
+	static int iZoneOffset = 0; 
+ 	char zone_buf[10] = {0};
+
+	LOG_LINE("iyear:%d,imonth:%d,imday:%d,ihour:%d,imin:%d,isec:%d izone:%d\n",iyear,imonth,imday,ihour,imin,isec,izone);
+
+	 /*setting time zone*/
+
+	iZoneOffset = izone -iZoneOffset;
+	iZoneOffset > 0 ? snprintf(zone_buf,sizeof(zone_buf),"GMT+%d", izone) 
+		: snprintf(zone_buf,sizeof(zone_buf),"GMT%d", izone);
+
+	LOG_LINE("zone_buf is %s\n",zone_buf);
+	setenv("TZ", zone_buf, 1);
+	tzset();
+
+	system("date -u");
+	#endif
+
+	//system("date .....");
+	tmUtcTimeToSet.tm_year = iyear-1900;
+	tmUtcTimeToSet.tm_mon = imonth - 1;
+	tmUtcTimeToSet.tm_mday = imday;
+	tmUtcTimeToSet.tm_hour = ihour;
+	tmUtcTimeToSet.tm_min = imin;
+	tmUtcTimeToSet.tm_sec = isec;
+
+	/*setting syetem time*/
+	timeToSetSystem = mktime(&tmUtcTimeToSet);
+	iRet = stime(&timeToSetSystem);
+	if(0 != iRet)
+	{
+		LOG_BLINE("setting system time failed.\n");
+		iOutRet=iRet;
+		return iOutRet;
+	}
+
+	 if(CurrentZone != izone)
+    {
+        timeToSetSystem = time(NULL);
+        timeToSetSystem += (izone - CurrentZone)*60*60;
+        iRet = stime(&timeToSetSystem);
+        if(0 != iRet)
+        {
+            LOG_BLINE("setting system time failed.\n");
+            iOutRet=iRet;
+            return iOutRet;
+        }
+        CurrentZone = izone;
+    } 
+	 
+	pNexusI2cBus=new CNexusI2cBus(iI2cBus);
+	if(NULL == pNexusI2cBus)
+	{
+		iOutRet=ERROR_OUT_OF_MEMORY;
+		return iOutRet;
+	}
+
+	pRtcIsl1208Device=new CRtcIsl1208Device(pNexusI2cBus);
+    if(NULL == pNexusI2cBus)
+	{
+		iOutRet=ERROR_OUT_OF_MEMORY;
+		delete pNexusI2cBus;
+		return iOutRet;
+	}
+	//	system("date -u");
+    /*seting i2c device time*/
+	pRtcIsl1208Device->setYear(iyear);
+	pRtcIsl1208Device->setMonth(imonth);
+	pRtcIsl1208Device->setDay(imday);
+	pRtcIsl1208Device->setHour(ihour);
+	pRtcIsl1208Device->setMinute(imin);
+	pRtcIsl1208Device->setSecond(isec);
+
+	iRet=pRtcIsl1208Device->setTimerToRtcDevice();
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	delete pRtcIsl1208Device;
+	delete pNexusI2cBus;
+
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::getHwRtcTime(OUT CString & ConfigDateTime)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	CNexusI2cBus *pNexusI2cBus=NULL;
+	CRtcIsl1208Device *pRtcIsl1208Device=NULL;
+	int iI2cBus=DEFAULT_RTC_I2C_BUS_ID;
+	DECLARE_CLS_STACK_BUF_STRING(strTmpConfigDateTime, 128);
+
+	pNexusI2cBus=new CNexusI2cBus(iI2cBus);
+	if(NULL == pNexusI2cBus)
+	{
+		iOutRet=ERROR_OUT_OF_MEMORY;
+		return iOutRet;
+	}
+
+	pRtcIsl1208Device=new CRtcIsl1208Device(pNexusI2cBus);
+	if(NULL == pNexusI2cBus)
+	{
+		iOutRet=ERROR_OUT_OF_MEMORY;
+		delete pNexusI2cBus;
+		return iOutRet;
+	}
+
+	iRet=pRtcIsl1208Device->getTimerFromRtcDevice();
+	if(!iRet)
+	{
+		iRet = strTmpConfigDateTime.Format("%d/%d/%d %02d:%02d:%02d\n",pRtcIsl1208Device->getYear(),pRtcIsl1208Device->getMonth(),\
+			pRtcIsl1208Device->getDay(),pRtcIsl1208Device->getHour(),pRtcIsl1208Device->getMinute(),pRtcIsl1208Device->getSecond());
+		if(ERROR_SUCCESS != iRet)
+		{
+			iOutRet = iRet;
+			goto EXIT_PROC;
+		}
+		ConfigDateTime = strTmpConfigDateTime;
+	}
+	else
+	{
+		PRINT_BFILE_LINENO_IRET_STR;
+	}
+
+EXIT_PROC:
+	 delete pRtcIsl1208Device;
+	 delete pNexusI2cBus;
+
+	return iOutRet;
+
+}
+
+INT_t CNexusExtImpl:: getDisplayPosition(int eRuaDispType,int &x,int &y,int &width,int &height)
+{
+	INT_t iOutRet = ERROR_SUCCESS;
+
+	x = posSetting.scalerPosSettings.uLeft;
+	y = posSetting.scalerPosSettings.uTop;
+	width = posSetting.scalerPosSettings.uWidth;
+	height = posSetting.scalerPosSettings.uHeight;
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl:: getVideoPosition(int eRuaDispType,int &x,int &y,int &width,int &height)
+{
+	INT_t iOutRet = ERROR_SUCCESS;
+	NEXUS_Error iNexusErr = NEXUS_SUCCESS;
+	media_player_t pMediaPlayer = (typeof(pMediaPlayer))m_pMediaPlayer;
+
+	if(NULL == pMediaPlayer)
+	{
+		iOutRet = ERR_INV_STATE;
+		goto EXIT_PROC;
+	}
+	
+	iNexusErr = MediaPlayer_getVidPos(pMediaPlayer,&x,&y,&width,&height);
+	if(NEXUS_SUCCESS != iNexusErr)
+	{
+		iOutRet = ERR_FAILED;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl:: setOsdPosition(int x,int y,int width,int height,int type)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	switch(type)
+	{
+		case QMedia_POSTION_ShiftX:posSetting.scalerPosSettings.uLeft = x;break;
+		case QMedia_POSTION_ShiftY:posSetting.scalerPosSettings.uTop = y;break;
+		case QMedia_POSTION_ShiftXSIZE:posSetting.scalerPosSettings.uWidth = width;break;
+		case QMedia_POSTION_ShiftYSIZE:posSetting.scalerPosSettings.uHeight = height;break;
+		default:break;
+	}
+
+	iRet = NxClient_SetDisplayPositionSettings(&posSetting);
+	if(iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::setHdmiCecCtrl(int HdmiCecCmd)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	
+	NEXUS_CecSettings cecSettings;
+	NEXUS_CecMessage transmitMessage;
+
+	iRet=NxClient_GetCecSettings(&cecSettings);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+	
+	cecSettings.enabled = true;
+	cecSettings.deviceType=NEXUS_CecDeviceType_eTv;
+	cecSettings.cecController=NEXUS_CecController_eTx;
+
+	iRet=NxClient_SetCecSettings(&cecSettings);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+	
+	transmitMessage.destinationAddr = 0;
+	transmitMessage.length = 1;
+	
+	switch(HdmiCecCmd)
+	{
+	case 1:
+		transmitMessage.buffer[0] = NEXUS_CEC_OpImageViewOn;
+		break;
+	case 2:
+		transmitMessage.buffer[0] = NEXUS_CEC_OpStandby;
+		break;
+	case 3:
+		transmitMessage.buffer[0] = NEXUS_CEC_OpUserControlPressed;
+		break;
+	case 4:
+		transmitMessage.buffer[0] = NEXUS_CEC_OpUserControlPressed;
+		break;
+	case 5:
+		transmitMessage.buffer[0] = NEXUS_CEC_OpUserControlPressed;
+		break;
+	default:
+		iOutRet = ERROR_INVALID_PARAMETER;
+		break;
+	}
+
+	iRet=NxClient_Cec_TransmitMessage(&transmitMessage);
+	if(iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	return iOutRet;
+	
+}
+
+#endif
+
+
+#ifdef ENABLE_DTV
+INT_t CNexusExtImpl::GetEntryChannelInfo(INT32_t iEntryId,INT32_t *pChannelNum,INT32_t *pNumofSubChannel,char *pStrPids)
+{
+	INT_t iOutRet = ERR_SUCCESS, iRet;
+	SharedPtr <CEventListener> evtListener_sp;
+	{
+		CAutoScopeLock AutoRangeLocker(&m_TunerScanMutex);
+		evtListener_sp = m_EvtListener_wp.Promote();
+	}
+
+	if(evtListener_sp.isNull())
+	{
+		PRINT_BFILE_LINENO_BUG_STR;
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+
+	if(FALSE == m_bTunerOpenSucc)
+	{
+		iRet=OpenTunerPlayer();
+		if( ERR_SUCCESS != iRet)
+		{
+			iOutRet=ERR_TUNER_OPEN_FAIL;
+			PRINT_BFILE_LINENO_IRET_STR;
+			evtListener_sp->NotifyTuPlayerPropmtMsg(ERR_NO_DEV);
+			goto EXIT_PROC;
+		}
+		m_bTunerOpenSucc=TRUE;
+	}
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERROR_OUT_OF_MEMORY;
+		goto EXIT_PROC;
+	}
+
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+
+	iRet = m_TunerSrv_sp->OnGetChannelInfo(iEntryId,pChannelNum,pNumofSubChannel,pStrPids);
+	if(ERROR_SUCCESS != iRet )
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:
+	
+	return iOutRet;
+	
+}
+
+INT_t CNexusExtImpl::PlayTuner(CONST LPCSTR pszUrl)
+{
+	INT_t iOutRet = ERR_SUCCESS, iRet;
+	INT32_t iChannelMode  = 0;
+	bool bChFound = FALSE;
+	UINT32_t Lock = 0;
+	SharedPtr <CEventListener> evtListener_sp;
+
+	{
+		CAutoScopeLock AutoRangeLocker(&m_TunerScanMutex);
+		evtListener_sp = m_EvtListener_wp.Promote();
+	}
+
+	if(evtListener_sp.isNull())
+	{
+		PRINT_BFILE_LINENO_BUG_STR;
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+
+	iRet = CreateMediaPlayer();
+	if(ERR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+	if(FALSE == m_bTunerOpenSucc)
+	{
+		iRet=OpenTunerPlayer();
+		if( ERR_SUCCESS != iRet)
+		{
+			iOutRet=ERR_TUNER_OPEN_FAIL;
+			evtListener_sp->NotifyTuPlayerPropmtMsg(ERR_NO_DEV);
+			goto EXIT_PROC;
+		}
+		m_bTunerOpenSucc=TRUE;
+	}
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERROR_OUT_OF_MEMORY;
+		goto EXIT_PROC;
+	}
+
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+
+	iRet = m_TunerSrv_sp->OnGetTunerChannelMode(&iChannelMode);
+	if(ERROR_SUCCESS != iRet )
+	{
+		if(ERROR_NOT_FOUND == iRet)
+		{
+			iChannelMode = CHANNEL_MODE_DEFAULT;
+		}
+		else
+		{
+			iOutRet = iRet;
+			goto EXIT_PROC;
+		}
+	}
+	
+	if(CHANNEL_MODE_DEFAULT == iChannelMode 
+			|| CHANNEL_MODE_FIXED_SCANNED == iChannelMode)
+	{
+		iRet = m_TunerSrv_sp->OnSetUrl((LPCSTR)pszUrl, &bChFound);
+		if(ERROR_SUCCESS != iRet)
+		{
+			iOutRet = iRet;
+			goto EXIT_PROC;
+		}
+		
+		if(ERROR_SUCCESS != iRet)
+		{
+			PRINT_BFILE_LINENO_IRET_STR;
+			iOutRet = ERROR_NOT_FOUND;
+			evtListener_sp->NotifyTuPlayerPropmtMsg(ERROR_NOT_FOUND);			
+			goto EXIT_PROC;
+		}
+	}
+	else
+	{
+		iRet = m_TunerSrv_sp->FindChannelIndexInFixedTable((LPCSTR)pszUrl, &bChFound);
+		if(ERROR_SUCCESS != iRet)
+		{
+			PRINT_BFILE_LINENO_IRET_STR;
+			iOutRet = ERROR_NOT_FOUND;
+			evtListener_sp->NotifyTuPlayerPropmtMsg(ERROR_NOT_FOUND);
+			goto EXIT_PROC;
+		}
+	}
+
+	{
+		media_player_start_settings mediaPlayerStartSettings;
+		media_player_get_default_start_settings(&mediaPlayerStartSettings);
+		mediaPlayerStartSettings.videoWindowType = NxClient_VideoWindowType_eMain;
+		mediaPlayerStartSettings.eof = pfnOnEndOfStreamCb;
+		mediaPlayerStartSettings.pfnVidDecStreamChangedCb = vidDecStreamChangedCb;
+		mediaPlayerStartSettings.context = this;
+		m_TunerSrv_sp->SetMediaStartSetting(&mediaPlayerStartSettings);
+	}
+
+	iRet = m_TunerSrv_sp->OnSetChannelInfo();
+	if(ERROR_SUCCESS != iRet)
+	{	
+		PRINT_BFILE_LINENO_IRET_STR;
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+
+	iRet = m_TunerSrv_sp->OnWaitLock(&Lock);
+	if(ERROR_SUCCESS != iRet)
+	{
+		PRINT_BFILE_LINENO_IRET_STR;
+	}
+
+	iRet = PsfPlayback();
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:
+	return iOutRet;	
+	
+}
+
+INT_t CNexusExtImpl::TunerScan()
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	SharedPtr <CEventListener> evtListener_sp;
+
+	{
+		CAutoScopeLock AutoRangeLocker(&m_TunerScanMutex);
+		evtListener_sp = m_EvtListener_wp.Promote();
+	}
+
+	if(evtListener_sp.isNull())
+	{
+		PRINT_BFILE_LINENO_BUG_STR;
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+
+	if(FALSE == m_bTunerOpenSucc)
+	{
+		iRet=OpenTunerPlayer();
+		if( ERR_SUCCESS != iRet)
+		{
+			iOutRet =ERR_TUNER_OPEN_FAIL;
+			PRINT_BFILE_LINENO_IRET_STR;
+			evtListener_sp->NotifyTuPlayerPropmtMsg(ERR_NO_DEV);
+			goto EXIT_PROC;
+		}
+
+		m_bTunerOpenSucc = TRUE;
+	}
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERROR_OUT_OF_MEMORY;
+		goto EXIT_PROC;
+	}
+	
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+
+	TunerScanProgressCk TunerScanPar;
+	TunerScanPar.context=this;
+	TunerScanPar.TuScanProgressCallback=CallBackScanProgress;
+	
+	iRet = m_TunerSrv_sp->OnSetScanProgressCb(&TunerScanPar);
+	if(ERROR_SUCCESS != iRet)
+	{
+		PRINT_BFILE_LINENO_BUG_STR;
+	}
+
+	evtListener_sp->Tuner_StartScan();
+	
+	iRet=m_TunerSrv_sp->OnScanProgram();
+	if(ERROR_SUCCESS != iRet && ERR_TU_SCAN_DONE != iRet && ERR_TU_USER_STOP_SCAN != iRet)
+	{
+		iOutRet = iRet;
+		evtListener_sp->Tuner_StopScan();
+		evtListener_sp->NotifyTuPlayerPropmtMsg(ERR_NO_DEV);
+		goto EXIT_PROC;
+	}
+	
+	evtListener_sp->Tuner_StopScan();
+
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::GetTunerChannelMode(int* iTuChMode)
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	SharedPtr<CTunerSrv> pTunerSrv_sp;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+	
+	if(m_TunerSrv_sp.isNull())
+	{
+		m_TunerSrv_sp = SharedPtr <CTunerSrv> (new CTunerSrv(m_pMediaPlayer));
+		if(m_TunerSrv_sp.isNull())
+		{
+			iRet=ERROR_OUT_OF_MEMORY;
+			iOutRet=iRet;
+			goto EXIT_PROC; 
+		}
+
+		iRet=m_TunerSrv_sp->InitInstance();
+		if(ERR_SUCCESS !=iRet )
+		{
+			iOutRet=iRet;
+			goto EXIT_PROC;
+		}
+	}
+	
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+
+	iRet = m_TunerSrv_sp->OnGetTunerChannelMode(iTuChMode);
+	if(ERROR_SUCCESS == iRet)
+	{
+	}
+	else if(ERROR_NOT_FOUND == iRet)
+	{
+	}
+	else
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::SetTunerChannelMode(int iTuChMode)
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	SharedPtr<CTunerSrv> pTunerSrv_sp;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+	
+	if(m_TunerSrv_sp.isNull())
+	{
+		m_TunerSrv_sp = SharedPtr <CTunerSrv> (new CTunerSrv(m_pMediaPlayer));
+		if(m_TunerSrv_sp.isNull())
+		{
+			iRet=ERROR_OUT_OF_MEMORY;
+			iOutRet=iRet;
+			goto EXIT_PROC; 
+		}
+
+		iRet=m_TunerSrv_sp->InitInstance();
+		if(ERR_SUCCESS !=iRet )
+		{
+			iOutRet=iRet;
+			goto EXIT_PROC;
+		}
+	}
+
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+	
+	iRet = m_TunerSrv_sp->OnSetTunerChannelMode(&iTuChMode);
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::SetTunerStandardMode(int iTuStMode)
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	SharedPtr<CTunerSrv> pTunerSrv_sp;
+
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+	
+	
+	if(m_TunerSrv_sp.isNull())
+	{
+		m_TunerSrv_sp = SharedPtr <CTunerSrv> (new CTunerSrv(m_pMediaPlayer));
+		if(m_TunerSrv_sp.isNull())
+		{
+			iRet=ERROR_OUT_OF_MEMORY;
+			iOutRet=iRet;
+			goto EXIT_PROC; 
+		}
+
+		iRet=m_TunerSrv_sp->InitInstance();
+		if(ERR_SUCCESS !=iRet )
+		{
+			iOutRet=iRet;
+			goto EXIT_PROC;
+		}
+	}
+	
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;
+	}
+	
+	iRet = m_TunerSrv_sp->OnSetTunerMode(&iTuStMode);
+	if(ERROR_SUCCESS == iRet)
+	{
+	}
+	else if(ERROR_NOT_FOUND == iRet)
+	{
+	}
+	else
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::GetFirstChNum(unsigned int* OMajor,unsigned int* OMinor)
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	SharedPtr<CTunerSrv> pTunerSrv_sp;
+	UINT32_t iMajor=0;
+	UINT32_t iMinord=0;
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;
+	}
+
+	iRet = m_TunerSrv_sp->OnGetChannelNumber(&iMajor,&iMinord);
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+	*OMajor=iMajor;
+	*OMinor=iMinord;
+	
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::ResetDuration()
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	INT_t iCurrPlayStatus= PLAY_STAT_IDLE;
+	SharedPtr <CEventListener> evtListener_sp;
+
+	{
+		CAutoScopeLock AutoRangeLocker(&m_TunerScanMutex);
+		evtListener_sp = m_EvtListener_wp.Promote();
+	}
+
+	if(evtListener_sp.isNull())
+	{
+		PRINT_BFILE_LINENO_BUG_STR;
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC;
+	}
+
+	
+	if(FALSE == m_bTunerOpenSucc)
+	{
+		iRet=OpenTunerPlayer();
+		if( ERR_SUCCESS != iRet)
+		{
+			iOutRet =ERR_TUNER_OPEN_FAIL;
+			PRINT_BFILE_LINENO_IRET_STR;
+			evtListener_sp->NotifyTuPlayerPropmtMsg(ERR_NO_DEV);
+			goto EXIT_PROC;
+		}
+		m_bTunerOpenSucc = TRUE;
+	}
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERROR_OUT_OF_MEMORY;
+		goto EXIT_PROC;
+	}
+	
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+
+	iOutRet = getMpSrvPlayStatus(&iCurrPlayStatus);
+	if(ERROR_SUCCESS != iOutRet) 
+	{
+		PRINT_BFILE_LINENO_IRET_CRT_ERR
+	}
+	
+	if(PLAY_STAT_PLAYING == iCurrPlayStatus
+		|| PLAY_STAT_TUNER_SCANNING == iCurrPlayStatus)
+	{
+		iOutRet = ERROR_INVALID_STATE;
+		goto EXIT_PROC;
+	}
+
+	iRet = m_TunerSrv_sp->OnReInitTunerModules();
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+
+EXIT_PROC:		
+		return iOutRet;
+
+}
+
+
+INT_t CNexusExtImpl::SetChannelUp()
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;
+	}
+	
+	iRet = m_TunerSrv_sp->OnChannelUp();
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:		
+
+	return iOutRet;
+
+}
+INT_t CNexusExtImpl::SetChannelDown()
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;
+	}
+	
+	iRet = m_TunerSrv_sp->OnChannelDown();
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:		
+
+	return iOutRet;
+
+}
+
+INT_t CNexusExtImpl::GetTunerStandardMode(int* iStdMode)
+{
+	INT_t iOutRet = ERROR_SUCCESS,iRet;
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;
+	}
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		m_TunerSrv_sp = SharedPtr <CTunerSrv> (new CTunerSrv(m_pMediaPlayer));
+		if(m_TunerSrv_sp.isNull())
+		{
+			iRet=ERROR_OUT_OF_MEMORY;
+			iOutRet=iRet;
+			goto EXIT_PROC; 
+		}
+
+		iRet=m_TunerSrv_sp->InitInstance();
+		if(ERR_SUCCESS !=iRet )
+		{
+			iOutRet=iRet;
+			goto EXIT_PROC;
+		}
+	}
+
+	if(FALSE == m_TunerSrv_sp->OnCheckInit())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;	
+	}
+	
+	iRet = m_TunerSrv_sp->OnGetTunerMode(iStdMode);
+	if(ERROR_SUCCESS == iRet)
+	{
+	}
+	else if(ERROR_NOT_FOUND == iRet)
+	{
+		iRet = m_TunerSrv_sp->OnGetCurrStdMode(iStdMode);
+		if(ERROR_SUCCESS != iRet)
+		{
+			PRINT_BFILE_LINENO_IRET_STR;
+			iOutRet = iRet;
+			goto EXIT_PROC;
+		}
+	}
+	else
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+	
+EXIT_PROC:		
+
+	return iOutRet;
+}
+
+INT_t CNexusExtImpl::GetSignalStrength(unsigned int* Strength)
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	SharedPtr<CTunerSrv> pTunerSrv_sp;
+	UINT32_t iStrength;
+
+	if(m_TunerSrv_sp.isNull())
+	{
+		iOutRet = ERR_INIT_FAIL;
+		goto EXIT_PROC;
+	}
+
+	iRet = m_TunerSrv_sp->OnGetStrength(&iStrength);
+	if(ERROR_SUCCESS != iRet)
+	{
+		iOutRet = iRet;
+		goto EXIT_PROC;
+	}
+
+	*Strength=iStrength;
+	
+EXIT_PROC:
+	return iOutRet;
+}
+
+
+INT_t CNexusExtImpl::PsfPlayback()
+{
+	INT_t iOutRet = ERR_SUCCESS, iRet;
+	
+	iRet = m_TunerSrv_sp->OnPsfSetPmt();
+	if(ERROR_SUCCESS != iRet)
+	{
+		//PRINT_BFILE_LINENO_IRET_STR;
+		iOutRet = iRet;
+	}
+	
+EXIT_PROC:
+	return iOutRet;
+
+}
+
+void CNexusExtImpl::CallBackScanProgress(void* pContext,UINT16_t *pRrogramNum,UINT16_t *pScanRrogress)
+{
+	CNexusExtImpl * pNexusExt = (typeof(pNexusExt))pContext;
+	if(CC_UNLIKELY(NULL == pNexusExt))
+	{
+		LOG_BLINE("BUG,pContext is NULL.\n");
+		goto EXIT_PROC;
+	}
+
+	if(NULL == pRrogramNum || NULL == pScanRrogress)
+	{
+		goto EXIT_PROC;
+	}
+	
+	pNexusExt->FN_cbScanProgress(pRrogramNum, pScanRrogress);
+
+EXIT_PROC:
+
+	;	
+}
+
+
+void CNexusExtImpl::FN_cbScanProgress(UINT16_t *pRrogramNum,UINT16_t *pScanRrogress)
+{
+	INT_t iRet;
+	UINT32_t uiProgramNum = 0;
+	UINT32_t uiScanRrogress = 0;
+	SharedPtr <CEventListener> evtListener_sp;
+
+	do{
+		if(NULL == pRrogramNum || NULL == pScanRrogress)
+		{
+			break;
+		}
+
+		{
+			CAutoScopeLock AutoRangeLocker(&m_TunerScanMutex);
+			evtListener_sp = m_EvtListener_wp.Promote();
+		}
+
+		if(evtListener_sp.isNull())
+		{
+			PRINT_BFILE_LINENO_BUG_STR;
+			break;
+		}
+		
+		uiProgramNum |= *pRrogramNum;
+		uiScanRrogress |= *pScanRrogress;
+		
+		evtListener_sp->NotifyScanProgress(uiProgramNum,uiScanRrogress);
+	}while(FALSE);
+
+}
+
+
+INT_t CNexusExtImpl::OpenTunerPlayer()
+{
+	INT_t iOutRet = ERROR_SUCCESS, iRet;
+	UINT64_t StartTimeMs = GetSysUpTimeMs(), CurTimeMs;
+	
+	if(NULL == m_pMediaPlayer)
+	{
+		iOutRet = ERROR_INVALID_PARAMETER;
+		goto EXIT_PROC; 
+	}
+	
+	if(m_TunerSrv_sp.isNull())
+	{
+		m_TunerSrv_sp = SharedPtr <CTunerSrv> (new CTunerSrv(m_pMediaPlayer));
+		if(m_TunerSrv_sp.isNull())
+		{
+			iRet=ERROR_OUT_OF_MEMORY;
+			iOutRet=iRet;
+			goto EXIT_PROC; 
+		}
+		
+		iRet=m_TunerSrv_sp->InitInstance();
+		if(ERR_SUCCESS !=iRet )
+		{
+			iOutRet=iRet;
+			goto EXIT_PROC;
+		}
+		
+	}
+
+	iRet=m_TunerSrv_sp->OpenTuner();
+	if( ERROR_SUCCESS != iRet)
+	{
+		iOutRet=iRet;
+		goto EXIT_PROC;
+	}
+
+	CurTimeMs = GetSysUpTimeMs();
+
+	LOG("OpenTuner took %llu ms\n", (CurTimeMs-StartTimeMs));	
+
+EXIT_PROC:
+	
+	return iOutRet;
+}
+
+#endif
+
+
+

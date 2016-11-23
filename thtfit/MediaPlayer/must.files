@@ -1,0 +1,6 @@
+MediaPlayerApp.h MediaSrv.h TransactionMsgData.h
+MediaPlayerAppIf.h NexusPlayer.h SerialComPort.h
+MediaPlayerAppDef.h VideoSync.h
+Main.cpp MediaPlayerApp.cpp MediaSrv.cpp TransactionMsgData.cpp
+MediaPlayerAppIf.cpp NexusPlayer.cpp CnkB85Lcm.cpp DbgLogSwitchDef.cpp
+SerialComPort.cpp VideoSync.cpp

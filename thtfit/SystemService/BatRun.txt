@@ -1,0 +1,27 @@
+ ¡¾gdbserverµ÷ÊÔ¡¿
+/Dbg/gdbserver :999 --attach 3290
+/Dbg/gdbserver :999 ./SystemService
+./cs_rootfs_1.2.19/package/gdb_host/gdb-7.3.1/gdb/gdb
+./cs_rootfs_1.2.19/package/gdb_host/gdb-7.2/gdb/gdb
+symbol-file SystemService/SystemService
+directory /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib
+directory /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+directory qt-4.7.4-2011.11.11/lib
+directory mrua_SMP8654F_3_11_0_dev.mips/lib
+directory cs_rootfs_1.2.19/root/lib
+directory WebBrowser
+directory QtExt
+directory qt/plugins/bearer
+directory SystemService
+path /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib
+path /sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+path qt-4.7.4-2011.11.11/lib
+path mrua_SMP8654F_3_11_0_dev.mips/lib
+path cs_rootfs_1.2.19/root/lib
+path WebBrowser
+path QtExt
+path qt/plugins/bearer
+path SystemService
+set solib-absolute-prefix cs_rootfs_1.2.19/build_mipsel/root/lib
+set solib-search-path SystemService:qt/plugins/imageformats:qt/plugins/bearer:QtExt:dbus/dbus/.libs:LinuxBaseLib/Out/Obj:cs_rootfs_1.2.19/build_mipsel/root/lib:mrua_SMP8654F_3_11_0_dev.mips/lib:qt-4.7.4-2011.11.11/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/lib:/sdb3/opt/mips-4.4/mips-linux-gnu/libc/el/usr/lib
+target remote 192.168.10.73:999
